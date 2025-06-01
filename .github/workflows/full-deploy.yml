@@ -188,11 +188,15 @@ jobs:
           echo "Installing backend dependencies..."
           yarn install 
           
+          # Update MySQL-related packages to support newer authentication
+          echo "Updating MySQL packages for authentication compatibility..."
+          yarn add mysql2@latest sequelize@latest || true
+          
           # Create environment file
           cat > .env << 'ENVEOF'
           NODE_ENV=production
           PORT=4000
-          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
+          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}?authPlugin=mysql_native_password
           DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_DBNAME=${{ secrets.DATABASE_DBNAME }}
