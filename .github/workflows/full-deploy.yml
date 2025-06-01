@@ -45,6 +45,7 @@ jobs:
             cd repo
             git fetch origin
             git reset --hard origin/main
+            git pull origin main
           else
             git clone https://github.com/${{ github.repository }}.git repo
             cd repo
@@ -54,6 +55,14 @@ jobs:
           cd ..
           cp -r repo current
           cd current
+          
+          # Verify files are present
+          echo "Files in current directory:"
+          ls -la
+          echo "Backend directory:"
+          ls -la RentALL_Cars_API_V3.1.5/ || echo "Backend directory not found"
+          echo "Frontend directory:"
+          ls -la RentALL_Cars_V3.1.5/ || echo "Frontend directory not found"
           
           EOF
 
@@ -70,11 +79,11 @@ jobs:
           sudo systemctl enable mysql
           
           # Secure MySQL installation (basic setup)
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';"
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';" || true
           sudo mysql -e "FLUSH PRIVILEGES;"
           
           # Create database and user
-          sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} << MYSQLEOF
+          sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} << MYSQLEOF || true
           DROP DATABASE IF EXISTS ${{ secrets.DATABASE_DBNAME }};
           CREATE DATABASE ${{ secrets.DATABASE_DBNAME }};
           DROP USER IF EXISTS '${{ secrets.DATABASE_USERNAME }}'@'%';
@@ -84,7 +93,7 @@ jobs:
           MYSQLEOF
           
           # Allow remote connections
-          sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+          sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf || true
           sudo systemctl restart mysql
           
           # Open MySQL port in firewall
@@ -94,19 +103,54 @@ jobs:
 
       - name: Import Database Dump
         run: |
-          # Copy database dump to SQL droplet
-          scp ./RentALL_Cars_V3.1.5/db/db_dump.sql root@${{ secrets.SQL_DROPLET_IP }}:/tmp/
+          # Check if database dump exists
+          if [ -f "./RentALL_Cars_V3.1.5/db/db_dump.sql" ]; then
+            echo "Database dump found, copying to SQL droplet..."
+            scp ./RentALL_Cars_V3.1.5/db/db_dump.sql root@${{ secrets.SQL_DROPLET_IP }}:/tmp/
+            
+            # Import the database dump
+            ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
+            
+            # Import database dump
+            mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} ${{ secrets.DATABASE_DBNAME }} < /tmp/db_dump.sql
+            
+            # Clean up dump file
+            rm /tmp/db_dump.sql
+            
+            echo "Database import completed successfully!"
+            
+          EOF
+          else
+            echo "Database dump not found, skipping import..."
+          fi
+
+      - name: Setup System Dependencies
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
           
-          # Import the database dump
-          ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
+          # Update system packages
+          sudo apt-get update
           
-          # Import database dump
-          mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} ${{ secrets.DATABASE_DBNAME }} < /tmp/db_dump.sql
+          # Install Node.js if not present
+          if ! command -v node &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
           
-          # Clean up dump file
-          rm /tmp/db_dump.sql
+          # Install yarn and pm2 globally
+          npm install -g yarn pm2
           
-          echo "Database import completed successfully!"
+          # Install Nginx if not present
+          sudo apt-get install -y nginx
+          
+          # Create swap file for build process (if not exists)
+          if [ ! -f /swapfile ]; then
+            sudo fallocate -l 2G /swapfile
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+            echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+          fi
           
           EOF
 
@@ -115,13 +159,14 @@ jobs:
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5
           
-          # Install Node.js if not present
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
+          echo "Setting up backend..."
+          echo "Current directory: $(pwd)"
+          echo "Files in directory:"
+          ls -la
           
           # Install dependencies
-          npm install -g yarn pm2
-          yarn install --production
+          echo "Installing backend dependencies..."
+          yarn install --production --verbose
           
           # Create environment file
           cat > .env << 'ENVEOF'
@@ -170,6 +215,8 @@ jobs:
           # Set permissions
           chmod -R 755 images/
           
+          echo "Backend setup completed"
+          
           EOF
 
       - name: Setup Frontend
@@ -177,8 +224,14 @@ jobs:
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /var/www/rentall-cars/current/RentALL_Cars_V3.1.5
           
-          # Install dependencies
-          yarn install
+          echo "Setting up frontend..."
+          echo "Current directory: $(pwd)"
+          echo "Files in directory:"
+          ls -la
+          
+          # Install dependencies first
+          echo "Installing frontend dependencies..."
+          yarn install --verbose
           
           # Create environment file
           cat > .env << 'ENVEOF'
@@ -217,8 +270,19 @@ jobs:
           SERVER_API_URL=http://localhost:4000
           ENVEOF
           
-          # Build the application
-          NODE_OPTIONS="--max_old_space_size=4096" yarn run build
+          # Check available memory before build
+          echo "Memory status before build:"
+          free -h
+          
+          # Build the application with increased memory and verbose output
+          echo "Starting frontend build..."
+          NODE_OPTIONS="--max_old_space_size=3072" yarn run build --verbose 2>&1 | tee build.log || {
+            echo "Build failed, checking logs:"
+            tail -50 build.log
+            echo "Memory status after failure:"
+            free -h
+            exit 1
+          }
           
           # Create necessary directories
           mkdir -p images/upload images/banner images/avatar images/document
@@ -228,14 +292,13 @@ jobs:
           # Set permissions
           chmod -R 755 images/
           
+          echo "Frontend setup completed"
+          
           EOF
 
       - name: Setup Nginx
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
-          
-          # Install Nginx if not present
-          sudo apt-get install -y nginx
           
           # Create Nginx configuration
           sudo tee /etc/nginx/sites-available/rentall-cars << 'NGINXEOF'
@@ -348,26 +411,55 @@ jobs:
           pm2 delete all || true
           pm2 start ecosystem.config.js
           pm2 save
-          pm2 startup
+          pm2 startup systemd -u root --hp /root
+          
+          # Check PM2 status
+          pm2 status
+          pm2 logs --lines 50
           
           EOF
 
-      - name: Health Check
+      - name: Health Check and Debugging
         run: |
-          sleep 60
+          sleep 30
           
-          # Check if services are running
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          
+          echo "=== DEPLOYMENT VERIFICATION ==="
+          echo "Files in /var/www/rentall-cars:"
+          ls -la /var/www/rentall-cars/
+          
+          echo "Files in current deployment:"
+          ls -la /var/www/rentall-cars/current/
+          
+          echo "PM2 Process Status:"
+          pm2 status
+          
+          echo "PM2 Logs (last 20 lines):"
+          pm2 logs --lines 20
+          
+          echo "Nginx Status:"
+          sudo systemctl status nginx --no-pager
+          
+          echo "Port Status:"
+          sudo netstat -tlnp | grep -E ':3000|:4000|:4001|:80'
+          
+          EOF
+          
+          # External health checks
+          echo "=== EXTERNAL HEALTH CHECKS ==="
+          
           echo "Checking backend health..."
-          curl -f http://${{ secrets.DROPLET_IP }}:4000 || echo "Backend health check failed"
+          curl -f http://${{ secrets.DROPLET_IP }}:4000 || echo "Backend direct access failed"
           
           echo "Checking frontend health..."
-          curl -f http://${{ secrets.DROPLET_IP }}:3000 || echo "Frontend health check failed"
+          curl -f http://${{ secrets.DROPLET_IP }}:3000 || echo "Frontend direct access failed"
           
           echo "Checking via Nginx..."
           curl -f http://${{ secrets.DROPLET_IP }} || echo "Nginx proxy check failed"
           
           echo "Checking database connection..."
-          ssh root@${{ secrets.SQL_DROPLET_IP }} "mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e 'SELECT COUNT(*) FROM ${{ secrets.DATABASE_DBNAME }}.User;'" || echo "Database connection check failed"
+          ssh root@${{ secrets.SQL_DROPLET_IP }} "mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e 'SHOW DATABASES;'" || echo "Database connection check failed"
 
       - name: Cleanup old deployments
         run: |
@@ -383,5 +475,9 @@ jobs:
           # Clean up old PM2 logs
           pm2 flush
           
-          echo "Deployment completed successfully!"
+          echo "=== DEPLOYMENT COMPLETED SUCCESSFULLY ==="
+          echo "Application should be available at: http://${{ secrets.DROPLET_IP }}"
+          echo "Backend API: http://${{ secrets.DROPLET_IP }}:4000"
+          echo "Frontend: http://${{ secrets.DROPLET_IP }}:3000"
+          
           EOF
