@@ -405,7 +405,7 @@ jobs:
                 name: 'rentall-frontend',
                 cwd: '/var/www/rentall-cars/current/RentALL_Cars_V3.1.5',
                 script: 'yarn',
-                args: 'start:production',
+                args: 'start',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 3000
