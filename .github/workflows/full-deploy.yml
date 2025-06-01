@@ -166,7 +166,7 @@ jobs:
           
           # Install all dependencies (including dev dependencies for build)
           echo "Installing backend dependencies..."
-          yarn install --verbose
+          yarn install 
           
           # Create environment file
           cat > .env << 'ENVEOF'
@@ -249,7 +249,7 @@ jobs:
           
           # Install dependencies first
           echo "Installing frontend dependencies..."
-          yarn install --verbose
+          yarn install 
           
           # Create environment file
           cat > .env << 'ENVEOF'
