@@ -1,0 +1,387 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add servers to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SQL_DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          
+          # Create application directory
+          mkdir -p /var/www/rentall-cars
+          cd /var/www/rentall-cars
+          
+          # Stop existing services if running
+          pm2 delete all || true
+          
+          # Backup current deployment (if exists)
+          if [ -d "current" ]; then
+            rm -rf backup
+            mv current backup
+          fi
+          
+          # Clone/update repository
+          if [ -d "repo" ]; then
+            cd repo
+            git fetch origin
+            git reset --hard origin/main
+          else
+            git clone https://github.com/${{ github.repository }}.git repo
+            cd repo
+          fi
+          
+          # Create new deployment directory
+          cd ..
+          cp -r repo current
+          cd current
+          
+          EOF
+
+      - name: Setup MySQL Database
+        run: |
+          ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
+          
+          # Install MySQL if not present
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          
+          # Start MySQL service
+          sudo systemctl start mysql
+          sudo systemctl enable mysql
+          
+          # Secure MySQL installation (basic setup)
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';"
+          sudo mysql -e "FLUSH PRIVILEGES;"
+          
+          # Create database and user
+          sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} << MYSQLEOF
+          DROP DATABASE IF EXISTS ${{ secrets.DATABASE_DBNAME }};
+          CREATE DATABASE ${{ secrets.DATABASE_DBNAME }};
+          DROP USER IF EXISTS '${{ secrets.DATABASE_USERNAME }}'@'%';
+          CREATE USER '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_DBNAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%';
+          FLUSH PRIVILEGES;
+          MYSQLEOF
+          
+          # Allow remote connections
+          sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+          sudo systemctl restart mysql
+          
+          # Open MySQL port in firewall
+          sudo ufw allow 3306
+          
+          EOF
+
+      - name: Import Database Dump
+        run: |
+          # Copy database dump to SQL droplet
+          scp ./RentALL_Cars_V3.1.5/db/db_dump.sql root@${{ secrets.SQL_DROPLET_IP }}:/tmp/
+          
+          # Import the database dump
+          ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
+          
+          # Import database dump
+          mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} ${{ secrets.DATABASE_DBNAME }} < /tmp/db_dump.sql
+          
+          # Clean up dump file
+          rm /tmp/db_dump.sql
+          
+          echo "Database import completed successfully!"
+          
+          EOF
+
+      - name: Setup Backend
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5
+          
+          # Install Node.js if not present
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Install dependencies
+          npm install -g yarn pm2
+          yarn install --production
+          
+          # Create environment file
+          cat > .env << 'ENVEOF'
+          NODE_ENV=production
+          PORT=4000
+          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
+          DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_DBNAME=${{ secrets.DATABASE_DBNAME }}
+          DATABASE_HOST=${{ secrets.SQL_DROPLET_IP }}
+          DATABASE_DIALECT=mysql
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          WEBSITE_HOSTNAME=${{ secrets.DROPLET_IP }}:4000
+          SITE_URL=http://${{ secrets.DROPLET_IP }}:3000
+          SITENAME=${{ secrets.SITENAME }}
+          WEBSITE_URL=http://${{ secrets.DROPLET_IP }}:3000
+          SOCKET_PORT=4001
+          SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
+          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
+          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
+          COINBASE_URL=${{ secrets.COINBASE_URL }}
+          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
+          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
+          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
+          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
+          FILEUPLOAD_DIR=./images/upload/
+          BANNER_UPLOAD_DIR=./images/banner/
+          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
+          DOCUMENT_UPLOAD_DIR=./images/document/
+          LOCATION_UPLOAD_DIR=./images/popularLocation/
+          HOME_BANNER_UPLOAD_DIR=./images/home/
+          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
+          FAVICON_UPLOAD_DIR=./images/favicon/
+          WHYHOST_UPLOAD_DIR=./images/whyhost/
+          LOGOUPLOAD_DIR=./images/logo/
+          OGIMAGEUPLOAD_DIR=./images/og-image/
+          ENVEOF
+          
+          # Create necessary directories
+          mkdir -p images/upload images/banner images/avatar images/document
+          mkdir -p images/popularLocation images/home images/claims
+          mkdir -p images/favicon images/whyhost images/logo images/og-image
+          
+          # Set permissions
+          chmod -R 755 images/
+          
+          EOF
+
+      - name: Setup Frontend
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars/current/RentALL_Cars_V3.1.5
+          
+          # Install dependencies
+          yarn install
+          
+          # Create environment file
+          cat > .env << 'ENVEOF'
+          NODE_ENV=production
+          REACT_APP_API_URL=http://${{ secrets.DROPLET_IP }}:4000
+          REACT_APP_SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          REACT_APP_NODE_ENV=production
+          REACT_APP_JWT_SECRET=${{ secrets.JWT_SECRET }}
+          REACT_APP_STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          REACT_APP_GOOGLE_MAP_API=${{ secrets.GOOGLE_MAP_CLIENT_API }}
+          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          COINBASE_URL=${{ secrets.COINBASE_URL }}
+          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
+          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
+          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
+          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
+          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
+          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
+          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
+          FILEUPLOAD_DIR=./images/upload/
+          BANNER_UPLOAD_DIR=./images/banner/
+          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
+          DOCUMENT_UPLOAD_DIR=./images/document/
+          LOCATION_UPLOAD_DIR=./images/popularLocation/
+          HOME_BANNER_UPLOAD_DIR=./images/home/
+          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
+          FAVICON_UPLOAD_DIR=./images/favicon/
+          WHYHOST_UPLOAD_DIR=./images/whyhost/
+          LOGOUPLOAD_DIR=./images/logo/
+          OGIMAGEUPLOAD_DIR=./images/og-image/
+          API_URL=http://localhost:4000
+          SOCKET_URL=http://localhost:4001
+          SOCKET_PORT=4001
+          SERVER_API_URL=http://localhost:4000
+          ENVEOF
+          
+          # Build the application
+          NODE_OPTIONS="--max_old_space_size=4096" yarn run build
+          
+          # Create necessary directories
+          mkdir -p images/upload images/banner images/avatar images/document
+          mkdir -p images/popularLocation images/home images/claims
+          mkdir -p images/favicon images/whyhost images/logo images/og-image
+          
+          # Set permissions
+          chmod -R 755 images/
+          
+          EOF
+
+      - name: Setup Nginx
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          
+          # Install Nginx if not present
+          sudo apt-get install -y nginx
+          
+          # Create Nginx configuration
+          sudo tee /etc/nginx/sites-available/rentall-cars << 'NGINXEOF'
+          server {
+              listen 80;
+              server_name ${{ secrets.DROPLET_IP }};
+          
+              # Frontend
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_cache_bypass $http_upgrade;
+              }
+          
+              # Backend API
+              location /api {
+                  proxy_pass http://localhost:4000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_cache_bypass $http_upgrade;
+              }
+          
+              # Socket.io
+              location /socket.io {
+                  proxy_pass http://localhost:4001;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          NGINXEOF
+          
+          # Enable the site
+          sudo ln -sf /etc/nginx/sites-available/rentall-cars /etc/nginx/sites-enabled/
+          sudo rm -f /etc/nginx/sites-enabled/default
+          
+          # Test and reload Nginx
+          sudo nginx -t
+          sudo systemctl reload nginx
+          sudo systemctl enable nginx
+          
+          EOF
+
+      - name: Setup PM2 Services
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars/current
+          
+          # Create PM2 ecosystem file
+          cat > ecosystem.config.js << 'PMEOF'
+          module.exports = {
+            apps: [
+              {
+                name: 'rentall-backend',
+                cwd: '/var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5',
+                script: 'yarn',
+                args: 'start',
+                env: {
+                  NODE_ENV: 'production',
+                  PORT: 4000
+                },
+                instances: 1,
+                autorestart: true,
+                watch: false,
+                max_memory_restart: '1G',
+                error_file: '/var/log/pm2/rentall-backend-error.log',
+                out_file: '/var/log/pm2/rentall-backend-out.log',
+                log_file: '/var/log/pm2/rentall-backend.log'
+              },
+              {
+                name: 'rentall-frontend',
+                cwd: '/var/www/rentall-cars/current/RentALL_Cars_V3.1.5',
+                script: 'yarn',
+                args: 'start',
+                env: {
+                  NODE_ENV: 'production',
+                  PORT: 3000
+                },
+                instances: 1,
+                autorestart: true,
+                watch: false,
+                max_memory_restart: '1G',
+                error_file: '/var/log/pm2/rentall-frontend-error.log',
+                out_file: '/var/log/pm2/rentall-frontend-out.log',
+                log_file: '/var/log/pm2/rentall-frontend.log'
+              }
+            ]
+          };
+          PMEOF
+          
+          # Create log directory
+          sudo mkdir -p /var/log/pm2
+          
+          # Start services with PM2
+          pm2 delete all || true
+          pm2 start ecosystem.config.js
+          pm2 save
+          pm2 startup
+          
+          EOF
+
+      - name: Health Check
+        run: |
+          sleep 60
+          
+          # Check if services are running
+          echo "Checking backend health..."
+          curl -f http://${{ secrets.DROPLET_IP }}:4000 || echo "Backend health check failed"
+          
+          echo "Checking frontend health..."
+          curl -f http://${{ secrets.DROPLET_IP }}:3000 || echo "Frontend health check failed"
+          
+          echo "Checking via Nginx..."
+          curl -f http://${{ secrets.DROPLET_IP }} || echo "Nginx proxy check failed"
+          
+          echo "Checking database connection..."
+          ssh root@${{ secrets.SQL_DROPLET_IP }} "mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e 'SELECT COUNT(*) FROM ${{ secrets.DATABASE_DBNAME }}.User;'" || echo "Database connection check failed"
+
+      - name: Cleanup old deployments
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars
+          
+          # Keep only current and backup
+          rm -rf old_backup
+          if [ -d "backup" ]; then
+            mv backup old_backup
+          fi
+          
+          # Clean up old PM2 logs
+          pm2 flush
+          
+          echo "Deployment completed successfully!"
+          EOF
