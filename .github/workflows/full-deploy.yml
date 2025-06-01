@@ -82,22 +82,42 @@ jobs:
           sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';" || true
           sudo mysql -e "FLUSH PRIVILEGES;"
           
-          # Create database and user
+          # Create database and user with mysql_native_password authentication
           sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} << MYSQLEOF || true
           DROP DATABASE IF EXISTS ${{ secrets.DATABASE_DBNAME }};
           CREATE DATABASE ${{ secrets.DATABASE_DBNAME }};
           DROP USER IF EXISTS '${{ secrets.DATABASE_USERNAME }}'@'%';
-          CREATE USER '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';
+          DROP USER IF EXISTS '${{ secrets.DATABASE_USERNAME }}'@'localhost';
+          
+          -- Create user with mysql_native_password authentication
+          CREATE USER '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';
+          CREATE USER '${{ secrets.DATABASE_USERNAME }}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DATABASE_PASSWORD }}';
+          
+          -- Grant privileges
           GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_DBNAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%';
+          GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_DBNAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'localhost';
+          
+          -- Set default authentication plugin globally
+          SET GLOBAL default_authentication_plugin = 'mysql_native_password';
+          
           FLUSH PRIVILEGES;
           MYSQLEOF
           
+          # Update MySQL configuration to use legacy authentication by default
+          echo "[mysqld]" | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
+          echo "default_authentication_plugin=mysql_native_password" | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
+          
           # Allow remote connections
           sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf || true
+          
+          # Restart MySQL to apply changes
           sudo systemctl restart mysql
           
           # Open MySQL port in firewall
           sudo ufw allow 3306
+          
+          # Verify the user authentication method
+          sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} -e "SELECT user, host, plugin FROM mysql.user WHERE user = '${{ secrets.DATABASE_USERNAME }}';"
           
           EOF
 
@@ -294,7 +314,7 @@ jobs:
           
           # Build the application with increased memory and verbose output
           echo "Starting frontend build..."
-          NODE_OPTIONS="--max_old_space_size=3072" yarn run build --verbose 2>&1 | tee frontend-build.log || {
+          yarn run build --verbose 2>&1 | tee frontend-build.log || {
             echo "Frontend build failed, checking logs:"
             tail -50 frontend-build.log
             echo "Memory status after failure:"
