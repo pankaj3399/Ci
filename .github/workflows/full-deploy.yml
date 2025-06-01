@@ -164,9 +164,9 @@ jobs:
           echo "Files in directory:"
           ls -la
           
-          # Install dependencies
+          # Install all dependencies (including dev dependencies for build)
           echo "Installing backend dependencies..."
-          yarn install --production --verbose
+          yarn install --verbose
           
           # Create environment file
           cat > .env << 'ENVEOF'
@@ -207,6 +207,20 @@ jobs:
           OGIMAGEUPLOAD_DIR=./images/og-image/
           ENVEOF
           
+          # Check available memory before build
+          echo "Memory status before backend build:"
+          free -h
+          
+          # Build the backend application
+          echo "Building backend application..."
+          NODE_OPTIONS="--max_old_space_size=2048" yarn run build --verbose 2>&1 | tee backend-build.log || {
+            echo "Backend build failed, checking logs:"
+            tail -50 backend-build.log
+            echo "Memory status after failure:"
+            free -h
+            exit 1
+          }
+          
           # Create necessary directories
           mkdir -p images/upload images/banner images/avatar images/document
           mkdir -p images/popularLocation images/home images/claims
@@ -214,6 +228,10 @@ jobs:
           
           # Set permissions
           chmod -R 755 images/
+          
+          # Remove dev dependencies after build
+          echo "Removing dev dependencies..."
+          yarn install --production --ignore-scripts
           
           echo "Backend setup completed"
           
@@ -271,14 +289,14 @@ jobs:
           ENVEOF
           
           # Check available memory before build
-          echo "Memory status before build:"
+          echo "Memory status before frontend build:"
           free -h
           
           # Build the application with increased memory and verbose output
           echo "Starting frontend build..."
-          NODE_OPTIONS="--max_old_space_size=3072" yarn run build --verbose 2>&1 | tee build.log || {
-            echo "Build failed, checking logs:"
-            tail -50 build.log
+          NODE_OPTIONS="--max_old_space_size=3072" yarn run build --verbose 2>&1 | tee frontend-build.log || {
+            echo "Frontend build failed, checking logs:"
+            tail -50 frontend-build.log
             echo "Memory status after failure:"
             free -h
             exit 1
@@ -370,7 +388,7 @@ jobs:
                 name: 'rentall-backend',
                 cwd: '/var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5',
                 script: 'yarn',
-                args: 'start',
+                args: 'start:production',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 4000
@@ -387,7 +405,7 @@ jobs:
                 name: 'rentall-frontend',
                 cwd: '/var/www/rentall-cars/current/RentALL_Cars_V3.1.5',
                 script: 'yarn',
-                args: 'start',
+                args: 'start:production',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 3000
@@ -431,6 +449,12 @@ jobs:
           
           echo "Files in current deployment:"
           ls -la /var/www/rentall-cars/current/
+          
+          echo "Backend build output:"
+          ls -la /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5/build/ || echo "No backend build directory found"
+          
+          echo "Frontend build output:"
+          ls -la /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/ || echo "No frontend build directory found"
           
           echo "PM2 Process Status:"
           pm2 status

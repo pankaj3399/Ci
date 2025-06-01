@@ -6,6 +6,7 @@
  
   "scripts": {
     "build": "babel ./src --out-dir ./build",
+    "start:production": "node ./build/server.js --host 0.0.0.0",
     "start": "./node_modules/nodemon/bin/nodemon.js --exec babel-node ./src/server.js --host 0.0.0.0",
     "test": "./node_modules/nodemon/bin/nodemon.js ./build/server.js --host 0.0.0.0"
   },
