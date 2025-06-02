@@ -333,6 +333,7 @@ jobs:
           
           # Set permissions
           chmod -R 755 images/
+          chmod -R 755 build/public
           
           echo "Frontend setup completed"
           
