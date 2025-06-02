@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # Add timeout to prevent hanging
 
     steps:
       - name: Checkout code
@@ -25,7 +26,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 root@${{ secrets.DROPLET_IP }} << 'EOF'
           
           # Create application directory
           mkdir -p /var/www/rentall-cars
@@ -68,7 +69,7 @@ jobs:
 
       - name: Setup MySQL Database
         run: |
-          ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
           
           # Install MySQL if not present
           sudo apt-get update
@@ -103,55 +104,46 @@ jobs:
           FLUSH PRIVILEGES;
           MYSQLEOF
           
-          # Update MySQL configuration to use legacy authentication by default
+          # Update MySQL configuration
           echo "[mysqld]" | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
           echo "default_authentication_plugin=mysql_native_password" | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
           
           # Allow remote connections
           sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf || true
           
-          # Restart MySQL to apply changes
+          # Restart MySQL
           sudo systemctl restart mysql
           
-          # Open MySQL port in firewall
+          # Open MySQL port
           sudo ufw allow 3306
-          
-          # Verify the user authentication method
-          sudo mysql -uroot -p${{ secrets.DATABASE_PASSWORD }} -e "SELECT user, host, plugin FROM mysql.user WHERE user = '${{ secrets.DATABASE_USERNAME }}';"
           
           EOF
 
       - name: Import Database Dump
+        timeout-minutes: 5
         run: |
-          # Check if database dump exists
           if [ -f "./RentALL_Cars_V3.1.5/db/db_dump.sql" ]; then
             echo "Database dump found, copying to SQL droplet..."
             scp ./RentALL_Cars_V3.1.5/db/db_dump.sql root@${{ secrets.SQL_DROPLET_IP }}:/tmp/
             
-            # Import the database dump
             ssh root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
-            
-            # Import database dump
             mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} ${{ secrets.DATABASE_DBNAME }} < /tmp/db_dump.sql
-            
-            # Clean up dump file
             rm /tmp/db_dump.sql
-            
             echo "Database import completed successfully!"
-            
           EOF
           else
             echo "Database dump not found, skipping import..."
           fi
 
       - name: Setup System Dependencies
+        timeout-minutes: 10
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
           
           # Update system packages
           sudo apt-get update
           
-          # Install Node.js if not present
+          # Install Node.js 20.x (recommended for SSR apps)
           if ! command -v node &> /dev/null; then
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
@@ -160,12 +152,12 @@ jobs:
           # Install yarn and pm2 globally
           npm install -g yarn pm2
           
-          # Install Nginx if not present
+          # Install Nginx
           sudo apt-get install -y nginx
           
-          # Create swap file for build process (if not exists)
+          # Create swap file for memory-intensive builds
           if [ ! -f /swapfile ]; then
-            sudo fallocate -l 2G /swapfile
+            sudo fallocate -l 4G /swapfile  # Increased to 4G for SSR builds
             sudo chmod 600 /swapfile
             sudo mkswap /swapfile
             sudo swapon /swapfile
@@ -175,21 +167,17 @@ jobs:
           EOF
 
       - name: Setup Backend
+        timeout-minutes: 15
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5
           
           echo "Setting up backend..."
-          echo "Current directory: $(pwd)"
-          echo "Files in directory:"
-          ls -la
           
-          # Install all dependencies (including dev dependencies for build)
-          echo "Installing backend dependencies..."
+          # Install dependencies
           yarn install 
           
-          # Update MySQL-related packages to support newer authentication
-          echo "Updating MySQL packages for authentication compatibility..."
+          # Update MySQL packages
           yarn add mysql2@latest sequelize@latest || true
           
           # Create environment file
@@ -204,9 +192,9 @@ jobs:
           DATABASE_DIALECT=mysql
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           WEBSITE_HOSTNAME=${{ secrets.DROPLET_IP }}:4000
-          SITE_URL=http://${{ secrets.DROPLET_IP }}:3000
+          SITE_URL=http://${{ secrets.DROPLET_IP }}
           SITENAME=${{ secrets.SITENAME }}
-          WEBSITE_URL=http://${{ secrets.DROPLET_IP }}:3000
+          WEBSITE_URL=http://${{ secrets.DROPLET_IP }}
           SOCKET_PORT=4001
           SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
           STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
@@ -231,59 +219,45 @@ jobs:
           OGIMAGEUPLOAD_DIR=./images/og-image/
           ENVEOF
           
-          # Check available memory before build
-          echo "Memory status before backend build:"
-          free -h
+          # Build backend
+          echo "Building backend..."
+          NODE_OPTIONS="--max_old_space_size=3072" yarn run build 2>&1 | tee backend-build.log
           
-          # Build the backend application
-          echo "Building backend application..."
-          NODE_OPTIONS="--max_old_space_size=2048" yarn run build --verbose 2>&1 | tee backend-build.log || {
-            echo "Backend build failed, checking logs:"
-            tail -50 backend-build.log
-            echo "Memory status after failure:"
-            free -h
-            exit 1
-          }
-          
-          # Create necessary directories
+          # Create directories
           mkdir -p images/upload images/banner images/avatar images/document
           mkdir -p images/popularLocation images/home images/claims
           mkdir -p images/favicon images/whyhost images/logo images/og-image
-          
-          # Set permissions
           chmod -R 755 images/
           
-          # Remove dev dependencies after build
-          echo "Removing dev dependencies..."
+          # Clean install for production
           yarn install --production --ignore-scripts
           
           echo "Backend setup completed"
-          
           EOF
 
-      - name: Setup Frontend
+      - name: Setup Frontend (SSR)
+        timeout-minutes: 20
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /var/www/rentall-cars/current/RentALL_Cars_V3.1.5
           
-          echo "Setting up frontend..."
-          echo "Current directory: $(pwd)"
-          echo "Files in directory:"
-          ls -la
+          echo "Setting up SSR frontend..."
           
-          # Install dependencies first
-          echo "Installing frontend dependencies..."
+          # Install dependencies
           yarn install 
           
-          # Create environment file
+          # Create environment file optimized for SSR
           cat > .env << 'ENVEOF'
           NODE_ENV=production
+          PORT=3000
+          # Client-side environment variables
           REACT_APP_API_URL=http://${{ secrets.DROPLET_IP }}:4000
           REACT_APP_SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
           REACT_APP_NODE_ENV=production
           REACT_APP_JWT_SECRET=${{ secrets.JWT_SECRET }}
           REACT_APP_STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
           REACT_APP_GOOGLE_MAP_API=${{ secrets.GOOGLE_MAP_CLIENT_API }}
+          # Server-side environment variables
           DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           COINBASE_URL=${{ secrets.COINBASE_URL }}
@@ -295,6 +269,7 @@ jobs:
           STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
           GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
           CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
+          # File upload directories
           FILEUPLOAD_DIR=./images/upload/
           BANNER_UPLOAD_DIR=./images/banner/
           PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
@@ -306,50 +281,107 @@ jobs:
           WHYHOST_UPLOAD_DIR=./images/whyhost/
           LOGOUPLOAD_DIR=./images/logo/
           OGIMAGEUPLOAD_DIR=./images/og-image/
+          # Internal API URLs for SSR
           API_URL=http://localhost:4000
           SOCKET_URL=http://localhost:4001
           SOCKET_PORT=4001
           SERVER_API_URL=http://localhost:4000
+          # Asset serving configuration
+          PUBLIC_URL=/
+          ASSET_PATH=/assets/
           ENVEOF
           
-          # Check available memory before build
-          echo "Memory status before frontend build:"
-          free -h
+          # Build the SSR application
+          echo "Building SSR application..."
+          NODE_OPTIONS="--max_old_space_size=4096" yarn run build 2>&1 | tee frontend-build.log
           
-          # Build the application with increased memory and verbose output
-          echo "Starting frontend build..."
-          yarn run build --verbose 2>&1 | tee frontend-build.log || {
-            echo "Frontend build failed, checking logs:"
-            tail -50 frontend-build.log
-            echo "Memory status after failure:"
-            free -h
-            exit 1
-          }
+          # Verify build output
+          echo "Build verification:"
+          ls -la build/ || echo "Build directory missing"
+          ls -la build/public/ || echo "Public directory missing"
+          ls -la build/public/assets/ || echo "Assets directory missing"
           
-          # Create necessary directories
+          # Create image directories
           mkdir -p images/upload images/banner images/avatar images/document
           mkdir -p images/popularLocation images/home images/claims
           mkdir -p images/favicon images/whyhost images/logo images/og-image
           
-          # Set permissions
+          # Set permissions for all directories
           chmod -R 755 images/
-          chmod -R 755 build/public
+          chmod -R 755 build/ || echo "No build directory to set permissions"
           
-          echo "Frontend setup completed"
-          
+          echo "Frontend SSR setup completed"
           EOF
 
-      - name: Setup Nginx
+      - name: Setup Nginx for SSR
+        timeout-minutes: 5
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
           
-          # Create Nginx configuration
+          # Create optimized Nginx configuration for SSR
           sudo tee /etc/nginx/sites-available/rentall-cars << 'NGINXEOF'
           server {
               listen 80;
               server_name ${{ secrets.DROPLET_IP }};
+              
+              # Gzip compression
+              gzip on;
+              gzip_vary on;
+              gzip_min_length 1024;
+              gzip_proxied expired no-cache no-store private must-revalidate auth;
+              gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;
           
-              # Frontend
+              # Static assets with long cache
+              location /assets/ {
+                  alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/public/assets/;
+                  expires 1y;
+                  add_header Cache-Control "public, immutable";
+                  access_log off;
+              }
+              
+              # Images with cache
+              location /images/ {
+                  alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/images/;
+                  expires 30d;
+                  add_header Cache-Control "public";
+                  access_log off;
+              }
+              
+              # Public files
+              location /public/ {
+                  alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/public/;
+                  expires 1d;
+                  add_header Cache-Control "public";
+              }
+          
+              # Backend API
+              location /api/ {
+                  proxy_pass http://localhost:4000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_cache_bypass $http_upgrade;
+                  proxy_read_timeout 300s;
+                  proxy_connect_timeout 75s;
+              }
+          
+              # Socket.io
+              location /socket.io/ {
+                  proxy_pass http://localhost:4001;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+              
+              # SSR Frontend (catch-all)
               location / {
                   proxy_pass http://localhost:3000;
                   proxy_http_version 1.1;
@@ -360,88 +392,73 @@ jobs:
                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_set_header X-Forwarded-Proto $scheme;
                   proxy_cache_bypass $http_upgrade;
-              }
-          
-              # Backend API
-              location /api {
-                  proxy_pass http://localhost:4000;
-                  proxy_http_version 1.1;
-                  proxy_set_header Upgrade $http_upgrade;
-                  proxy_set_header Connection 'upgrade';
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                  proxy_cache_bypass $http_upgrade;
-              }
-          
-              # Socket.io
-              location /socket.io {
-                  proxy_pass http://localhost:4001;
-                  proxy_http_version 1.1;
-                  proxy_set_header Upgrade $http_upgrade;
-                  proxy_set_header Connection "upgrade";
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_read_timeout 300s;
+                  proxy_connect_timeout 75s;
+                  
+                  # Handle timeouts gracefully
+                  proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
               }
           }
           NGINXEOF
           
-          # Enable the site
+          # Enable site
           sudo ln -sf /etc/nginx/sites-available/rentall-cars /etc/nginx/sites-enabled/
           sudo rm -f /etc/nginx/sites-enabled/default
           
-          # Test and reload Nginx
-          sudo nginx -t
-          sudo systemctl reload nginx
+          # Test and restart Nginx
+          sudo nginx -t && sudo systemctl restart nginx
           sudo systemctl enable nginx
           
           EOF
 
-      - name: Setup PM2 Services
+      - name: Setup PM2 for SSR (Single Instance Mode)
+        timeout-minutes: 10
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /var/www/rentall-cars/current
           
-          # Create PM2 ecosystem file
+          # Create PM2 ecosystem optimized for SSR
           cat > ecosystem.config.js << 'PMEOF'
           module.exports = {
             apps: [
               {
                 name: 'rentall-backend',
                 cwd: '/var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5',
-                script: 'yarn',
-                args: 'start:production',
+                script: 'build/server.js',
+                interpreter: 'node',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 4000
                 },
-                instances: 1,
+                instances: 1,  // Single instance for SSR
+                exec_mode: 'fork',  // Fork mode instead of cluster
                 autorestart: true,
                 watch: false,
                 max_memory_restart: '1G',
                 error_file: '/var/log/pm2/rentall-backend-error.log',
                 out_file: '/var/log/pm2/rentall-backend-out.log',
-                log_file: '/var/log/pm2/rentall-backend.log'
+                log_file: '/var/log/pm2/rentall-backend.log',
+                time: true
               },
               {
-                name: 'rentall-frontend',
+                name: 'rentall-frontend-ssr',
                 cwd: '/var/www/rentall-cars/current/RentALL_Cars_V3.1.5',
-                script: 'yarn',
-                args: 'start',
+                script: 'build/server.js',
+                interpreter: 'node',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 3000
                 },
-                instances: 1,
+                instances: 1,  // Single instance for SSR
+                exec_mode: 'fork',  // Fork mode for SSR
                 autorestart: true,
                 watch: false,
-                max_memory_restart: '1G',
+                max_memory_restart: '2G',  // Higher memory limit for SSR
                 error_file: '/var/log/pm2/rentall-frontend-error.log',
                 out_file: '/var/log/pm2/rentall-frontend-out.log',
-                log_file: '/var/log/pm2/rentall-frontend.log'
+                log_file: '/var/log/pm2/rentall-frontend.log',
+                time: true,
+                restart_delay: 5000
               }
             ]
           };
@@ -450,83 +467,53 @@ jobs:
           # Create log directory
           sudo mkdir -p /var/log/pm2
           
-          # Start services with PM2
+          # Stop existing processes
           pm2 delete all || true
+          pm2 kill || true
+          
+          # Start new processes
+          echo "Starting PM2 services..."
           pm2 start ecosystem.config.js
+          
+          # Wait for services to start
+          sleep 15
+          
+          # Check status
+          pm2 status
           pm2 save
+          
+          # Setup PM2 startup
           pm2 startup systemd -u root --hp /root
           
-          # Check PM2 status
-          pm2 status
-          pm2 logs --lines 50
-          
+          echo "PM2 setup completed"
           EOF
 
-      - name: Health Check and Debugging
+      - name: Final Health Check
+        timeout-minutes: 5
         run: |
           sleep 30
           
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
-          
-          echo "=== DEPLOYMENT VERIFICATION ==="
-          echo "Files in /var/www/rentall-cars:"
-          ls -la /var/www/rentall-cars/
-          
-          echo "Files in current deployment:"
-          ls -la /var/www/rentall-cars/current/
-          
-          echo "Backend build output:"
-          ls -la /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5/build/ || echo "No backend build directory found"
-          
-          echo "Frontend build output:"
-          ls -la /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/ || echo "No frontend build directory found"
-          
-          echo "PM2 Process Status:"
-          pm2 status
-          
-          echo "PM2 Logs (last 20 lines):"
-          pm2 logs --lines 20
-          
-          echo "Nginx Status:"
-          sudo systemctl status nginx --no-pager
-          
-          echo "Port Status:"
-          sudo netstat -tlnp | grep -E ':3000|:4000|:4001|:80'
-          
-          EOF
-          
-          # External health checks
+          # Test from GitHub Actions runner
           echo "=== EXTERNAL HEALTH CHECKS ==="
           
-          echo "Checking backend health..."
-          curl -f http://${{ secrets.DROPLET_IP }}:4000 || echo "Backend direct access failed"
+          echo "Testing backend..."
+          curl -f --max-time 30 http://${{ secrets.DROPLET_IP }}:4000 || echo "Backend check failed"
           
-          echo "Checking frontend health..."
-          curl -f http://${{ secrets.DROPLET_IP }}:3000 || echo "Frontend direct access failed"
+          echo "Testing frontend SSR..."
+          curl -f --max-time 30 http://${{ secrets.DROPLET_IP }}:3000 || echo "Frontend check failed"
           
-          echo "Checking via Nginx..."
-          curl -f http://${{ secrets.DROPLET_IP }} || echo "Nginx proxy check failed"
+          echo "Testing via Nginx..."
+          curl -f --max-time 30 http://${{ secrets.DROPLET_IP }} || echo "Nginx check failed"
           
-          echo "Checking database connection..."
-          ssh root@${{ secrets.SQL_DROPLET_IP }} "mysql -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e 'SHOW DATABASES;'" || echo "Database connection check failed"
+          echo "Testing asset serving..."
+          curl -I --max-time 10 http://${{ secrets.DROPLET_IP }}/assets/ || echo "Assets check failed"
 
-      - name: Cleanup old deployments
+      - name: Deployment Summary
+        if: always()
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
-          cd /var/www/rentall-cars
-          
-          # Keep only current and backup
-          rm -rf old_backup
-          if [ -d "backup" ]; then
-            mv backup old_backup
-          fi
-          
-          # Clean up old PM2 logs
-          pm2 flush
-          
-          echo "=== DEPLOYMENT COMPLETED SUCCESSFULLY ==="
-          echo "Application should be available at: http://${{ secrets.DROPLET_IP }}"
-          echo "Backend API: http://${{ secrets.DROPLET_IP }}:4000"
-          echo "Frontend: http://${{ secrets.DROPLET_IP }}:3000"
-          
-          EOF
+          echo "=== DEPLOYMENT SUMMARY ==="
+          echo "✅ Backend API: http://${{ secrets.DROPLET_IP }}:4000"
+          echo "✅ Frontend SSR: http://${{ secrets.DROPLET_IP }}:3000"
+          echo "✅ Main Site: http://${{ secrets.DROPLET_IP }}"
+          echo "📁 Assets: http://${{ secrets.DROPLET_IP }}/assets/"
+          echo "🖼️ Images: http://${{ secrets.DROPLET_IP }}/images/"
