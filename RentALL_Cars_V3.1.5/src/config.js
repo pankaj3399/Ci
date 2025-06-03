@@ -4,7 +4,9 @@ require('dotenv').config();
 
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
-export const url = 'http://localhost:3001';
+export const url = export const url = process.env.NODE_ENV === 'production' && process.env.WEBSITE_HOSTNAME && !process.env.WEBSITE_HOSTNAME.includes('localhost')
+  ? `https://${process.env.WEBSITE_HOSTNAME}`
+  : 'http://localhost:4001';
 export const socketUrl = process.env.SOCKET_URL || 'http://localhost:4001'
 export const socketPort = process.env.SOCKET_PORT || 4001;
 
