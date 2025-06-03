@@ -166,6 +166,152 @@ jobs:
           
           EOF
 
+      - name: Setup Backend
+        timeout-minutes: 15
+        run: |
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5
+          
+          echo "Setting up backend..."
+          
+          # Install dependencies
+          yarn install 
+          
+          # Update MySQL packages
+          yarn add mysql2@latest sequelize@latest || true
+          
+          # Create environment file
+          cat > .env << 'ENVEOF'
+          NODE_ENV=production
+          PORT=4000
+          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}?authPlugin=mysql_native_password
+          DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_DBNAME=${{ secrets.DATABASE_DBNAME }}
+          DATABASE_HOST=${{ secrets.SQL_DROPLET_IP }}
+          DATABASE_DIALECT=mysql
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          WEBSITE_HOSTNAME=${{ secrets.DROPLET_IP }}:4000
+          SITE_URL=http://${{ secrets.DROPLET_IP }}
+          SITENAME=${{ secrets.SITENAME }}
+          WEBSITE_URL=http://${{ secrets.DROPLET_IP }}
+          SOCKET_PORT=4001
+          SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
+          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
+          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
+          COINBASE_URL=${{ secrets.COINBASE_URL }}
+          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
+          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
+          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
+          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
+          FILEUPLOAD_DIR=./images/upload/
+          BANNER_UPLOAD_DIR=./images/banner/
+          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
+          DOCUMENT_UPLOAD_DIR=./images/document/
+          LOCATION_UPLOAD_DIR=./images/popularLocation/
+          HOME_BANNER_UPLOAD_DIR=./images/home/
+          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
+          FAVICON_UPLOAD_DIR=./images/favicon/
+          WHYHOST_UPLOAD_DIR=./images/whyhost/
+          LOGOUPLOAD_DIR=./images/logo/
+          OGIMAGEUPLOAD_DIR=./images/og-image/
+          ENVEOF
+          
+          # Build backend
+          echo "Building backend..."
+          NODE_OPTIONS="--max_old_space_size=3072" yarn run build 2>&1 | tee backend-build.log
+          
+          # Create directories
+          mkdir -p images/upload images/banner images/avatar images/document
+          mkdir -p images/popularLocation images/home images/claims
+          mkdir -p images/favicon images/whyhost images/logo images/og-image
+          chmod -R 755 images/
+          
+          # Clean install for production
+          yarn install --production --ignore-scripts
+          
+          echo "Backend setup completed"
+          EOF
+
+      - name: Setup Frontend (SSR)
+        timeout-minutes: 20
+        run: |
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /var/www/rentall-cars/current/RentALL_Cars_V3.1.5
+          
+          echo "Setting up SSR frontend..."
+          
+          # Install dependencies
+          yarn install 
+          
+          # Create environment file optimized for SSR
+          cat > .env << 'ENVEOF'
+          NODE_ENV=production
+          PORT=3000
+          # Client-side environment variables
+          REACT_APP_API_URL=http://${{ secrets.DROPLET_IP }}:4000
+          REACT_APP_SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          REACT_APP_NODE_ENV=production
+          REACT_APP_JWT_SECRET=${{ secrets.JWT_SECRET }}
+          REACT_APP_STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          REACT_APP_GOOGLE_MAP_API=${{ secrets.GOOGLE_MAP_CLIENT_API }}
+          # Server-side environment variables
+          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          COINBASE_URL=${{ secrets.COINBASE_URL }}
+          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
+          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
+          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
+          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
+          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
+          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
+          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
+          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
+          # File upload directories
+          FILEUPLOAD_DIR=./images/upload/
+          BANNER_UPLOAD_DIR=./images/banner/
+          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
+          DOCUMENT_UPLOAD_DIR=./images/document/
+          LOCATION_UPLOAD_DIR=./images/popularLocation/
+          HOME_BANNER_UPLOAD_DIR=./images/home/
+          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
+          FAVICON_UPLOAD_DIR=./images/favicon/
+          WHYHOST_UPLOAD_DIR=./images/whyhost/
+          LOGOUPLOAD_DIR=./images/logo/
+          OGIMAGEUPLOAD_DIR=./images/og-image/
+          # Internal API URLs for SSR
+          API_URL=http://localhost:4000
+          SOCKET_URL=http://localhost:4001
+          SOCKET_PORT=4001
+          SERVER_API_URL=http://localhost:4000
+          # Asset serving configuration
+          PUBLIC_URL=/
+          ASSET_PATH=/assets/
+          ENVEOF
+          
+          # Build the SSR application
+          echo "Building SSR application..."
+          NODE_OPTIONS="--max_old_space_size=4096" yarn run build 2>&1 | tee frontend-build.log
+          
+          # Verify build output
+          echo "Build verification:"
+          ls -la build/ || echo "Build directory missing"
+          ls -la build/public/ || echo "Public directory missing"
+          ls -la build/public/assets/ || echo "Assets directory missing"
+          
+          # Create image directories
+          mkdir -p images/upload images/banner images/avatar images/document
+          mkdir -p images/popularLocation images/home images/claims
+          mkdir -p images/favicon images/whyhost images/logo images/og-image
+          
+          # Set permissions for all directories
+          chmod -R 755 images/
+          chmod -R 755 build/ || echo "No build directory to set permissions"
+          
+          echo "Frontend SSR setup completed"
+          EOF
 
       - name: Setup Nginx for Custom Domain
         timeout-minutes: 10
@@ -179,7 +325,7 @@ jobs:
           # Create optimized Nginx configuration for custom domain
           sudo rm -f /etc/nginx/sites-available/rentall-cars
           
-          # Create Nginx config using echo commands - HTTP redirect server
+          # Create Nginx config using echo commands (fixed gzip_proxied directive)
           echo "# Redirect HTTP to HTTPS for custom domain" | sudo tee /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "server {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    listen 80;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
@@ -196,12 +342,27 @@ jobs:
           echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          
-          # HTTP fallback for IP access
-          echo "# HTTP fallback for IP access (development/testing)" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "# HTTPS configuration for custom domain" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "server {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    listen 80 default_server;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    server_name ${{ secrets.DROPLET_IP }};" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    listen 443 ssl http2;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    server_name ${{ secrets.CUSTOM_DOMAIN }} www.${{ secrets.CUSTOM_DOMAIN }};" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    # SSL configuration" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_certificate /etc/letsencrypt/live/${{ secrets.CUSTOM_DOMAIN }}/fullchain.pem;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_certificate_key /etc/letsencrypt/live/${{ secrets.CUSTOM_DOMAIN }}/privkey.pem;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    # SSL security settings" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_protocols TLSv1.2 TLSv1.3;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_prefer_server_ciphers off;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_session_cache shared:SSL:10m;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    ssl_session_timeout 10m;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    # Security headers" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    add_header X-Content-Type-Options nosniff always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    add_header X-Frame-Options DENY always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    add_header X-XSS-Protection \"1; mode=block\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+          echo "    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    # Gzip compression" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    gzip on;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
@@ -334,105 +495,6 @@ jobs:
                 echo "✅ SSL certificate successfully created!"
                 echo "Certificate details:"
                 sudo certbot certificates | grep -A 5 "${{ secrets.CUSTOM_DOMAIN }}"
-                
-          # Add HTTPS server block to existing Nginx config
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "# HTTPS configuration for custom domain" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "server {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    listen 443 ssl http2;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    server_name ${{ secrets.CUSTOM_DOMAIN }} www.${{ secrets.CUSTOM_DOMAIN }};" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # SSL configuration" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_certificate /etc/letsencrypt/live/${{ secrets.CUSTOM_DOMAIN }}/fullchain.pem;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_certificate_key /etc/letsencrypt/live/${{ secrets.CUSTOM_DOMAIN }}/privkey.pem;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # SSL security settings" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_protocols TLSv1.2 TLSv1.3;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_prefer_server_ciphers off;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_session_cache shared:SSL:10m;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    ssl_session_timeout 10m;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Security headers" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    add_header X-Content-Type-Options nosniff always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    add_header X-Frame-Options DENY always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    add_header X-XSS-Protection \"1; mode=block\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Gzip compression" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    gzip on;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    gzip_vary on;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    gzip_min_length 1024;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    gzip_proxied expired no-cache no-store private -revmustalidate auth;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Static assets with long cache" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    location /assets/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/public/assets/;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        expires 1y;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        add_header Cache-Control \"public, immutable\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        access_log off;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Images with cache" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    location /images/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/images/;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        expires 30d;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        add_header Cache-Control \"public\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        access_log off;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Public files" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    location /public/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        alias /var/www/rentall-cars/current/RentALL_Cars_V3.1.5/build/public/;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        expires 1d;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        add_header Cache-Control \"public\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    # Backend API" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    location /api/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_pass http://localhost:4000;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header Connection 'upgrade';" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_cache_bypass \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_read_timeout 300s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "        proxy_connect_timeout 75s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    # Socket.io" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    location /socket.io/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_pass http://localhost:4001;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Connection \"upgrade\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    # SSR Frontend (catch-all)" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    location / {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_pass http://localhost:3000;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Connection 'upgrade';" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_cache_bypass \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_read_timeout 300s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_connect_timeout 75s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-          echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-        
               } || {
                 echo "❌ SSL certificate creation failed. Checking logs..."
                 sudo tail -20 /var/log/letsencrypt/letsencrypt.log || echo "Could not read certbot logs"
