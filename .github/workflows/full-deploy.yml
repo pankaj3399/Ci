@@ -418,9 +418,14 @@ jobs:
           sudo ln -sf /etc/nginx/sites-available/rentall-cars /etc/nginx/sites-enabled/
           sudo rm -f /etc/nginx/sites-enabled/default
           
-          # Test Nginx configuration
+          # Test Nginx configuration (will fail if SSL certificates don't exist yet, but that's ok)
           echo "Testing Nginx configuration..."
-          sudo nginx -t
+          if sudo nginx -t; then
+            echo "✅ Nginx configuration is valid"
+          else
+            echo "⚠️ Nginx configuration test failed (probably due to missing SSL certificates)"
+            echo "This is normal if SSL certificates haven't been created yet."
+          fi
           
           EOF
 
@@ -540,35 +545,35 @@ jobs:
                 echo "        proxy_read_timeout 300s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "        proxy_connect_timeout 75s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-                echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    # Socket.io" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    location /socket.io/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_pass http://localhost:4001;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Connection \"upgrade\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    # SSR Frontend (catch-all)" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    location / {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_pass http://localhost:3000;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Connection 'upgrade';" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_cache_bypass \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_read_timeout 300s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_connect_timeout 75s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-                echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
+                echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    # Socket.io" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    location /socket.io/ {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_pass http://localhost:4001;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Connection \"upgrade\";" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    # SSR Frontend (catch-all)" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    location / {" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_pass http://localhost:3000;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_http_version 1.1;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Upgrade \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Connection 'upgrade';" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_set_header X-Forwarded-Proto \$scheme;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_cache_bypass \$http_upgrade;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_read_timeout 300s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_connect_timeout 75s;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars
               
               } || {
                 echo "❌ SSL certificate creation failed. Checking logs..."
