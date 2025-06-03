@@ -541,6 +541,7 @@ jobs:
           
           # Wait for Nginx to start
           sleep 10
+     
           
           # Check if certificate already exists
           if [ -f "/etc/letsencrypt/live/${{ secrets.CUSTOM_DOMAIN }}/fullchain.pem" ]; then
