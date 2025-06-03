@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
@@ -25,6 +25,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SQL_DROPLET_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
+        timeout-minutes: 10
         run: |
           ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 root@${{ secrets.DROPLET_IP }} << 'EOF'
           
@@ -68,6 +69,7 @@ jobs:
           EOF
 
       - name: Setup MySQL Database
+        timeout-minutes: 10
         run: |
           ssh -o ServerAliveInterval=60 root@${{ secrets.SQL_DROPLET_IP }} << 'EOF'
           
@@ -150,7 +152,7 @@ jobs:
           
           # Create swap file for memory-intensive builds
           if [ ! -f /swapfile ]; then
-            sudo fallocate -l 4G /swapfile  # Increased to 4G for SSR builds
+            sudo fallocate -l 4G /swapfile
             sudo chmod 600 /swapfile
             sudo mkswap /swapfile
             sudo swapon /swapfile
@@ -158,6 +160,7 @@ jobs:
           fi
           
           EOF
+
       - name: Setup Backend
         timeout-minutes: 15
         run: |
@@ -183,12 +186,12 @@ jobs:
           DATABASE_HOST=${{ secrets.SQL_DROPLET_IP }}
           DATABASE_DIALECT=mysql
           JWT_SECRET=${{ secrets.JWT_SECRET }}
-          WEBSITE_HOSTNAME=${{ secrets.DROPLET_IP }}:4000
-          SITE_URL=http://${{ secrets.DROPLET_IP }}
+          WEBSITE_HOSTNAME=${{ secrets.CUSTOM_DOMAIN }}
+          SITE_URL=https://${{ secrets.CUSTOM_DOMAIN }}
           SITENAME=${{ secrets.SITENAME }}
-          WEBSITE_URL=http://${{ secrets.DROPLET_IP }}
+          WEBSITE_URL=https://${{ secrets.CUSTOM_DOMAIN }}
           SOCKET_PORT=4001
-          SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          SOCKET_URL=wss://${{ secrets.CUSTOM_DOMAIN }}
           STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
           PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
           PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
@@ -226,6 +229,7 @@ jobs:
           
           echo "Backend setup completed"
           EOF
+
       - name: Setup Frontend (SSR)
         timeout-minutes: 20
         run: |
@@ -241,9 +245,9 @@ jobs:
           cat > .env << 'ENVEOF'
           NODE_ENV=production
           PORT=3000
-          # Client-side environment variables
-          REACT_APP_API_URL=http://${{ secrets.DROPLET_IP }}:4000
-          REACT_APP_SOCKET_URL=http://${{ secrets.DROPLET_IP }}:4001
+          # Client-side environment variables with custom domain
+          REACT_APP_API_URL=https://${{ secrets.CUSTOM_DOMAIN }}/api
+          REACT_APP_SOCKET_URL=wss://${{ secrets.CUSTOM_DOMAIN }}
           REACT_APP_NODE_ENV=production
           REACT_APP_JWT_SECRET=${{ secrets.JWT_SECRET }}
           REACT_APP_STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
@@ -413,8 +417,8 @@ jobs:
           echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-
-          # HTTPS configuration for custom domain (will work if SSL certificates exist)
+          
+          # HTTPS BLOCK - THIS WAS MISSING!
           echo "# HTTPS configuration for custom domain" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "server {" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    listen 443 ssl http2;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
@@ -510,7 +514,6 @@ jobs:
           echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-
           
           # Enable site
           sudo ln -sf /etc/nginx/sites-available/rentall-cars /etc/nginx/sites-enabled/
@@ -614,102 +617,6 @@ jobs:
           
           EOF
 
-      - name: Update Environment Variables for Custom Domain
-        timeout-minutes: 5
-        run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
-          
-          # Update backend environment with custom domain
-          cd /var/www/rentall-cars/current/RentALL_Cars_API_V3.1.5
-          
-          # Create updated environment file
-          cat > .env << 'ENVEOF'
-          NODE_ENV=production
-          PORT=4000
-          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}?authPlugin=mysql_native_password
-          DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_DBNAME=${{ secrets.DATABASE_DBNAME }}
-          DATABASE_HOST=${{ secrets.SQL_DROPLET_IP }}
-          DATABASE_DIALECT=mysql
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          WEBSITE_HOSTNAME=${{ secrets.CUSTOM_DOMAIN }}
-          SITE_URL=https://${{ secrets.CUSTOM_DOMAIN }}
-          SITENAME=${{ secrets.SITENAME }}
-          WEBSITE_URL=https://${{ secrets.CUSTOM_DOMAIN }}
-          SOCKET_PORT=4001
-          SOCKET_URL=https://${{ secrets.CUSTOM_DOMAIN }}:4001
-          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
-          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
-          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
-          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
-          COINBASE_URL=${{ secrets.COINBASE_URL }}
-          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
-          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
-          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
-          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
-          FILEUPLOAD_DIR=./images/upload/
-          BANNER_UPLOAD_DIR=./images/banner/
-          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
-          DOCUMENT_UPLOAD_DIR=./images/document/
-          LOCATION_UPLOAD_DIR=./images/popularLocation/
-          HOME_BANNER_UPLOAD_DIR=./images/home/
-          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
-          FAVICON_UPLOAD_DIR=./images/favicon/
-          WHYHOST_UPLOAD_DIR=./images/whyhost/
-          LOGOUPLOAD_DIR=./images/logo/
-          OGIMAGEUPLOAD_DIR=./images/og-image/
-          ENVEOF
-          
-          # Update frontend environment with custom domain
-          cd /var/www/rentall-cars/current/RentALL_Cars_V3.1.5
-          
-          cat > .env << 'ENVEOF'
-          NODE_ENV=production
-          PORT=3000
-          # Client-side environment variables with custom domain
-          REACT_APP_API_URL=https://${{ secrets.CUSTOM_DOMAIN }}/api
-          REACT_APP_SOCKET_URL=https://${{ secrets.CUSTOM_DOMAIN }}
-          REACT_APP_NODE_ENV=production
-          REACT_APP_JWT_SECRET=${{ secrets.JWT_SECRET }}
-          REACT_APP_STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
-          REACT_APP_GOOGLE_MAP_API=${{ secrets.GOOGLE_MAP_CLIENT_API }}
-          # Server-side environment variables
-          DATABASE_URL=mysql://${{ secrets.DATABASE_USERNAME }}:${{ secrets.DATABASE_PASSWORD }}@${{ secrets.SQL_DROPLET_IP }}:3306/${{ secrets.DATABASE_DBNAME }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          COINBASE_URL=${{ secrets.COINBASE_URL }}
-          PLACE_DETAILS_URL=${{ secrets.PLACE_DETAILS_URL }}
-          PLACES_AUTOCOMPLETE_URL=${{ secrets.PLACES_AUTOCOMPLETE_URL }}
-          PAYPAL_RETURN_URL=${{ secrets.PAYPAL_RETURN_URL }}
-          PAYPAL_CANCEL_URL=${{ secrets.PAYPAL_CANCEL_URL }}
-          PAYPAL_SUCCESS_REDIRECT_URL=${{ secrets.PAYPAL_SUCCESS_REDIRECT_URL }}
-          STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}
-          GOOGLE_MAP_SERVER_API=${{ secrets.GOOGLE_MAP_SERVER_API }}
-          CRON_TIMEZONE=${{ secrets.CRON_TIMEZONE }}
-          # File upload directories
-          FILEUPLOAD_DIR=./images/upload/
-          BANNER_UPLOAD_DIR=./images/banner/
-          PROFILE_PHOTO_UPLOAD_DIR=./images/avatar/
-          DOCUMENT_UPLOAD_DIR=./images/document/
-          LOCATION_UPLOAD_DIR=./images/popularLocation/
-          HOME_BANNER_UPLOAD_DIR=./images/home/
-          CLAIM_IMAGES_UPLOAD_DIR=./images/claims/
-          FAVICON_UPLOAD_DIR=./images/favicon/
-          WHYHOST_UPLOAD_DIR=./images/whyhost/
-          LOGOUPLOAD_DIR=./images/logo/
-          OGIMAGEUPLOAD_DIR=./images/og-image/
-          # Internal API URLs for SSR
-          API_URL=http://localhost:4000
-          SOCKET_URL=http://localhost:4001
-          SOCKET_PORT=4001
-          SERVER_API_URL=http://localhost:4000
-          # Asset serving configuration
-          PUBLIC_URL=/
-          ASSET_PATH=/assets/
-          ENVEOF
-          
-          EOF
-
       - name: Setup PM2 for SSR (Single Instance Mode)
         timeout-minutes: 10
         run: |
@@ -729,8 +636,8 @@ jobs:
                   NODE_ENV: 'production',
                   PORT: 4000
                 },
-                instances: 1,  // Single instance for SSR
-                exec_mode: 'fork',  // Fork mode instead of cluster
+                instances: 1,
+                exec_mode: 'fork',
                 autorestart: true,
                 watch: false,
                 max_memory_restart: '1G',
@@ -748,11 +655,11 @@ jobs:
                   NODE_ENV: 'production',
                   PORT: 3000
                 },
-                instances: 1,  // Single instance for SSR
-                exec_mode: 'fork',  // Fork mode for SSR
+                instances: 1,
+                exec_mode: 'fork',
                 autorestart: true,
                 watch: false,
-                max_memory_restart: '2G',  // Higher memory limit for SSR
+                max_memory_restart: '2G',
                 error_file: '/var/log/pm2/rentall-frontend-error.log',
                 out_file: '/var/log/pm2/rentall-frontend-out.log',
                 log_file: '/var/log/pm2/rentall-frontend.log',
