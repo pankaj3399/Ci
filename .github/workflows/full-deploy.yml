@@ -363,7 +363,7 @@ jobs:
                 echo "    gzip on;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "    gzip_vary on;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "    gzip_min_length 1024;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
-                echo "    gzip_proxied expired no-cache no-store private must-revalidate auth;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
+                echo "    gzip_proxied expired no-cache no-store private auth;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "" | sudo tee -a /etc/nginx/sites-available/rentall-cars
                 echo "    # Static assets with long cache" | sudo tee -a /etc/nginx/sites-available/rentall-cars
