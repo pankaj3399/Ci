@@ -510,7 +510,7 @@ jobs:
           echo "        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "    }" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
           echo "}" | sudo tee -a /etc/nginx/sites-available/rentall-cars > /dev/null
-         
+
           
           # Enable site
           sudo ln -sf /etc/nginx/sites-available/rentall-cars /etc/nginx/sites-enabled/
