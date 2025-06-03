@@ -318,6 +318,7 @@ jobs:
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
           
+          
           # Install certbot for SSL certificates
           sudo apt-get update
           sudo apt-get install -y certbot python3-certbot-nginx
