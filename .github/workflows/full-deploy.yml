@@ -49,7 +49,7 @@ jobs:
             git reset --hard origin/main
             git pull origin main
           else
-            git clone https://github.com/${{ github.repository }}.git repo
+            git clone -b cicd https://github.com/${{ github.repository }}.git repo
             cd repo
           fi
           
