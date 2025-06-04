@@ -11,7 +11,7 @@ export const url = 'http://localhost:3001';
 export const socketUrl = process.env.SOCKET_URL || 'http://localhost:4001'
 export const socketPort = process.env.SOCKET_PORT || 4001;
 
-export const sitename = 'Your Site Name'; // Your site name
+export const sitename = 'Rentall'; // Your site name
 
 export const locales = ['en-US', 'es', 'it-IT', 'fr-FR', 'pt-PT', 'ar']; // default locale is the first one
 
