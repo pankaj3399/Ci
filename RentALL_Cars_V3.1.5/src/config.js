@@ -2,6 +2,9 @@ require('dotenv').config();
 
 /* eslint-disable max-len */
 
+// IMPORTANT: Update the following configuration values before deploying to production
+// Replace all placeholder values with your actual production values
+
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 export const url = 'http://localhost:3001';

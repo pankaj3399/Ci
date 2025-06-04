@@ -2,6 +2,195 @@
 
 This project is a full-stack application consisting of a Node.js backend and a React frontend, designed to be deployed on Digital Ocean using GitHub Actions CI/CD. This README provides an overview of the project structure, setup instructions, and deployment guidelines.
 
+## Complete Deployment Guide
+
+### Step 1: SSH Key Setup
+
+#### 1.1 Generate SSH Key Pair (if you don't have one)
+```bash
+# On your local machine
+ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+# Save as: ~/.ssh/id_rsa (default)
+# Don't set a passphrase for CI/CD usage
+```
+
+#### 1.2 You'll need the .pub key while creating droplets(servers)
+
+
+### Step 2: Create Digital Ocean Droplets
+
+#### .1 Create Main Application Droplet
+1. **Login to Digital Ocean**
+   - Go to [Digital Ocean](https://www.digitalocean.com/)
+   - Sign in to your account
+
+2. **Create New Droplet**
+   - Click "Create" → "Droplets"
+   - **Image**: Ubuntu 22.04 (LTS) x64
+   - **Size**: Basic plan, Regular Intel ($12/month, 2GB RAM, 1 vCPU, 50GB SSD)
+   - **Region**: Choose closest to your users
+   - **Authentication**: SSH keys (recommended) ***(As mentioned in STEP 1.2)***
+   - **Hostname**: `rentall-app-server`
+   - Click "Create Droplet"
+
+#### 2.2 Create MySQL Database Droplet
+1. **Create Second Droplet**
+   - Follow same steps as above
+   - **Hostname**: `rentall-mysql-server`
+   - **Size**: You can use smaller size for database ($6/month, 1GB RAM)
+  
+#### 2.3 Test SSH connections
+```bash
+# Test connection to both droplets
+ssh root@YOUR_APP_DROPLET_IP
+ssh root@YOUR_MYSQL_DROPLET_IP
+```
+
+
+### Step 3: Domain Configuration
+
+#### 3.1 Purchase and Configure Domain
+1. **Purchase Domain** from your preferred registrar (Namecheap, GoDaddy, etc.)
+
+2. **Configure DNS Records**
+   - **A Record**: `@` → `YOUR_APP_DROPLET_IP`
+   - **A Record**: `www` → `YOUR_APP_DROPLET_IP`
+   - **CNAME Record**: `www` → `yourdomain.com` (alternative to www A record)
+
+3. **Verify DNS Propagation**
+   ```bash
+   # Check if domain resolves correctly
+   nslookup yourdomain.com
+   nslookup www.yourdomain.com
+   
+   # Should return your droplet IP address
+   ```
+
+### Step 4: Configure GitHub Repository
+
+#### 4.1 Fork/Clone Repository
+```bash
+# Clone the repository
+git clone <repository-url>
+cd rentall-cars-cicd
+```
+
+#### 4.2 Configure GitHub Secrets
+1. **Go to Repository Settings**
+   - Navigate to `Settings > Secrets and variables > Actions`
+
+2. **Add Required Secrets** (click "New repository secret" for each):
+
+**Server Configuration:**
+```
+SSH_PRIVATE_KEY = [Content of ~/.ssh/id_rsa file]
+DROPLET_IP = [Your main application droplet IP]
+SQL_DROPLET_IP = [Your MySQL droplet IP]
+```
+
+**Database Configuration:**
+```
+DATABASE_USERNAME = rentall_user
+DATABASE_PASSWORD = [Strong password for MySQL]
+DATABASE_DBNAME = rentall
+```
+
+**Application Secrets:**
+```
+JWT_SECRET = [Random 32+ character string]
+SITENAME = RentAll Cars
+```
+
+**Domain & SSL:**
+```
+CUSTOM_DOMAIN = yourdomain.com
+SSL_EMAIL = your-email@example.com
+```
+
+**Payment Integration:**
+```
+STRIPE_SECRET = sk_test_... (or sk_live_...)
+PAYPAL_RETURN_URL = /paypal/return
+PAYPAL_CANCEL_URL = /paypal/cancel
+PAYPAL_SUCCESS_REDIRECT_URL = /booking/success
+```
+
+**External APIs:**
+```
+GOOGLE_MAP_SERVER_API = [Your Google Maps API key]
+GOOGLE_MAP_CLIENT_API = [Your Google Maps API key]
+COINBASE_URL = https://api.coinbase.com
+PLACE_DETAILS_URL = https://maps.googleapis.com/maps/api/place/details/json
+PLACES_AUTOCOMPLETE_URL = https://maps.googleapis.com/maps/api/place/autocomplete/json
+```
+
+**System Configuration:**
+```
+CRON_TIMEZONE = America/New_York
+```
+
+### Step 5: Pre-Deployment Configuration
+
+#### 5.1 Configure Backend Settings
+**IMPORTANT**: Before pushing to main branch, edit the configuration files with required variables: `/RentALL_Cars_V3.1.5/src/config.js` & `/RentALL_Cars_API_V3.1.5/src/config.js`
+
+
+### Step 6: Deploy the Application
+
+#### 6.1 Final Pre-Deployment Checklist
+- [ ] Both droplets are created and accessible via SSH
+- [ ] SSH private key is added to GitHub secrets
+- [ ] Domain DNS is configured and propagated
+- [ ] All GitHub secrets are configured
+- [ ] Backend `src/config.js` is updated with your values
+- [ ] Frontend config files are updated (if applicable)
+- [ ] Google Maps API key is valid and has required permissions
+- [ ] Stripe keys are correct (test or live)
+
+#### 6.2 Trigger Deployment
+```bash
+# Commit your configuration changes
+git add .
+git commit -m "Configure production settings"
+
+# Push to main branch to trigger deployment
+git push origin main
+```
+
+#### 6.3 Monitor Deployment
+1. **Watch GitHub Actions**
+   - Go to `Actions` tab in your repository
+   - Monitor the deployment workflow progress
+
+2. **Check Deployment Logs**
+   - Click on the running workflow
+   - Monitor each step for any errors
+
+### Step 7: Post-Deployment Verification
+
+#### 7.1 Verify Application
+```bash
+# Check if your domain loads
+curl -I https://yourdomain.com
+
+# Should return 200 OK with proper SSL
+```
+
+#### 7.2 Monitor Server Health
+```bash
+# SSH into your server
+ssh root@YOUR_DROPLET_IP
+
+# Check PM2 processes
+pm2 status
+
+# Check Nginx status
+sudo systemctl status nginx
+
+# Check SSL certificate
+sudo certbot certificates
+```
+
 ## Required Secrets for GitHub Actions
 
 Before deploying, you need to configure the following secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
@@ -79,33 +268,13 @@ The deployment automatically configures SSL certificates using Let's Encrypt:
    cd rentall-cars-cicd
    ```
 
-2. **Configure GitHub Secrets**
-   - Go to your GitHub repository
-   - Navigate to `Settings > Secrets and variables > Actions`
-   - Add all the required secrets listed above
+2. **Follow the Complete Deployment Guide Above**
+   - Complete Steps 1-7 for full deployment setup
 
-3. **Prepare Your Digital Ocean Droplets**
-   - Create a main droplet for the application
-   - Create a separate droplet for MySQL database
-   - Ensure both droplets can communicate with each other
-   - Set up SSH key access for both droplets
-
-4. **Environment Variables**
-   - Copy the `.env.example` to `.env` and fill in the required values.
+3. **Environment Variables**
+   - Copy the `.env.example` to `.env` and fill in the required values for local development.
    ```bash
    cp .env.example .env
-   ```
-
-5. **Docker Setup (for local development)**
-   - Ensure Docker is installed and running on your machine.
-   - Build the Docker images for both backend and frontend.
-   ```bash
-   docker-compose -f docker/docker-compose.yml build
-   ```
-
-6. **Run the Application Locally**
-   ```bash
-   docker-compose -f docker/docker-compose.yml up
    ```
 
 ## Deployment Guidelines
@@ -243,10 +412,10 @@ sudo nginx -t
    - Check firewall allows port 3306
    - Test connection: `mysql -h SQL_DROPLET_IP -u username -p`
 
-## Additional Scripts
-
-- **Health Check**: The `health-check.sh` script can be used to verify that the services are running correctly after deployment.
-- **MySQL Setup**: The `setup-mysql.sh` script automates MySQL server configuration.
+4. **Config.js Issues**
+   - Ensure all placeholder values are replaced
+   - Verify API keys are valid
+   - Check domain URLs are correct
 
 ## Security Considerations
 
@@ -257,6 +426,16 @@ sudo nginx -t
 - Firewall rules implemented
 - Regular security updates via apt
 
+## Important Notes
+
+- **Never commit sensitive data** like API keys directly to the repository
+- **Always use environment variables** for sensitive configuration
+- **Test your configuration** in a staging environment before production
+- **Keep your dependencies updated** for security
+- **Monitor your application** after deployment for any issues
+
 ## Conclusion
 
-This README provides a comprehensive overview of the RentAll Cars CI/CD project. Follow the setup instructions to get started, configure all required secrets, set up your custom domain DNS records, and the GitHub Actions workflow will handle the complete deployment process automatically.
+This README provides a comprehensive overview of the RentAll Cars CI/CD project. Follow the complete deployment guide step-by-step to ensure successful deployment. Make sure to update all configuration files with your actual values before pushing to the main branch.
+
+For any issues during deployment, check the troubleshooting section or review the GitHub Actions logs for detailed error information.
