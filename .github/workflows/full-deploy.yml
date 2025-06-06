@@ -22,51 +22,110 @@ jobs:
 
       - name: Add servers to known hosts
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.SQL_DROPLET_IP }} >> ~/.ssh/known_hosts
 
+      - name: Setup System Dependencies
+        timeout-minutes: 10
+        run: |
+          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
+          
+          # Update system packages
+          sudo apt-get update
+          
+          # Install Node.js 20.x (recommended for SSR apps)
+          if ! command -v node &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
+          
+          # Install yarn and pm2 globally
+          npm install -g yarn pm2
+          
+          # Install Nginx
+          sudo apt-get install -y nginx
+          
+          # Create swap file for memory-intensive builds
+          if [ ! -f /swapfile ]; then
+            sudo fallocate -l 4G /swapfile  # Increased to 4G for SSR builds
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+            echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+          fi
+          
+          EOF
+
+
+
       - name: Deploy to server
         run: |
-          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 root@${{ secrets.DROPLET_IP }} << 'EOF'
+          # Transfer the SSH key to the droplet
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | ssh root@${{ secrets.DROPLET_IP }} 'mkdir -p ~/.ssh && cat > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa && chmod 700 ~/.ssh'
           
-          # Create application directory
+          # Deploy the application
+          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o ConnectTimeout=30 root@${{ secrets.DROPLET_IP }} << 'EOF'
+          set -e  # Exit on any error
+          set -x  # Print commands as they execute
+          
+          echo "=== Starting deployment process ==="
+          
+          # Ensure SSH directory exists
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          echo "=== Adding GitHub to known hosts ==="
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          
+          echo "=== Creating application directory ==="
           mkdir -p /var/www/rentall-cars
           cd /var/www/rentall-cars
+          echo "Current directory: $(pwd)"
           
-          # Stop existing services if running
-          pm2 delete all || true
+          echo "=== Stopping existing PM2 services ==="
+          pm2 delete all 2>/dev/null || echo "No PM2 processes to stop"
           
-          # Backup current deployment (if exists)
+          echo "=== Backing up current deployment ==="
           if [ -d "current" ]; then
-            rm -rf backup
-            mv current backup
+            echo "Backing up current deployment"
+            rm -rf backup 2>/dev/null || true
+            mv current backup 2>/dev/null || true
           fi
           
-          # Clone/update repository
+          echo "=== Handling repository ==="
           if [ -d "repo" ]; then
+            echo "Updating existing repository..."
             cd repo
-            git fetch origin
+            echo "Current repo directory: $(pwd)"
+            git status || echo "Git status check failed"
+            git fetch origin --verbose
             git reset --hard origin/main
-            git pull origin main
+            git pull origin main --verbose
           else
-            git clone git@github.com:${{ github.repository }} repo
-            cd repo
+            echo "Cloning repository..."
+            echo "About to clone: git@github.com:${{ github.repository }}.git"
+            git clone git@github.com:${{ github.repository }}.git repo --verbose
+            if [ $? -eq 0 ]; then
+              echo "Clone successful, entering repo directory"
+              cd repo
+            else
+              echo "Clone failed with exit code: $?"
+              exit 1
+            fi
           fi
           
-          
-          # Create new deployment directory
-          cd ..
-          cp -r repo current
-          cd current
-          
-          # Verify files are present
-          echo "Files in current directory:"
+          echo "=== Repository operations completed ==="
+          echo "Current directory: $(pwd)"
           ls -la
-          echo "Backend directory:"
-          ls -la RentALL_Cars_API_V3.1.5/ || echo "Backend directory not found"
-          echo "Frontend directory:"
-          ls -la RentALL_Cars_V3.1.5/ || echo "Frontend directory not found"
+          
+          echo "=== Creating symlink ==="
+          cd /var/www/rentall-cars
+          rm -f current
+          ln -s repo current
+          
+          echo "=== Deployment completed successfully! ==="
           
           EOF
 
@@ -117,6 +176,7 @@ jobs:
           # Restart MySQL
           sudo systemctl restart mysql
           
+
           # Open MySQL port
           sudo ufw allow 3306
           
@@ -138,36 +198,6 @@ jobs:
             echo "Database dump not found, skipping import..."
           fi
 
-      - name: Setup System Dependencies
-        timeout-minutes: 10
-        run: |
-          ssh -o ServerAliveInterval=60 root@${{ secrets.DROPLET_IP }} << 'EOF'
-          
-          # Update system packages
-          sudo apt-get update
-          
-          # Install Node.js 20.x (recommended for SSR apps)
-          if ! command -v node &> /dev/null; then
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-          fi
-          
-          # Install yarn and pm2 globally
-          npm install -g yarn pm2
-          
-          # Install Nginx
-          sudo apt-get install -y nginx
-          
-          # Create swap file for memory-intensive builds
-          if [ ! -f /swapfile ]; then
-            sudo fallocate -l 4G /swapfile  # Increased to 4G for SSR builds
-            sudo chmod 600 /swapfile
-            sudo mkswap /swapfile
-            sudo swapon /swapfile
-            echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-          fi
-          
-          EOF
 
       - name: Setup Backend
         timeout-minutes: 15
