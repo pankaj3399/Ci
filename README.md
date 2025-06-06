@@ -16,6 +16,8 @@ ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
 
 #### 1.2 You'll need the .pub key while creating droplets(servers)
 
+#### 1.3 Add the .pub key in `Your Github Repository > Settings > Deploy Keys`
+
 
 ### Step 2: Create Digital Ocean Droplets
 
