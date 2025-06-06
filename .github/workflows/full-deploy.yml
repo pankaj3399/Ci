@@ -22,6 +22,7 @@ jobs:
 
       - name: Add servers to known hosts
         run: |
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.SQL_DROPLET_IP }} >> ~/.ssh/known_hosts
 
@@ -49,7 +50,7 @@ jobs:
             git reset --hard origin/main
             git pull origin main
           else
-            git clone -b cicd https://github.com/${{ github.repository }}.git repo
+            git clone git@github.com:${{ github.repository }} repo
             cd repo
           fi
           
