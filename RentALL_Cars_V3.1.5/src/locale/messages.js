@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
   manageListing: {
     id: 'app.manageListing',
-    defaultMessage: 'Manage cars',
+    defaultMessage: 'Manage bikes',
     description: 'Menu item',
   },
   transactionHistory: {
@@ -267,7 +267,7 @@ const messages = defineMessages({
   },
   yourListings: {
     id: 'app.yourListings',
-    defaultMessage: 'Your cars',
+    defaultMessage: 'Your bikes',
     description: 'Your Listings',
   },
   account: {
@@ -332,7 +332,7 @@ const messages = defineMessages({
   },
   recommended: {
     id: 'app.recommended',
-    defaultMessage: 'Recommended cars',
+    defaultMessage: 'Recommended bikes',
     description: 'Recommended Home page Slider title',
   },
   mostViewed: {
@@ -403,12 +403,12 @@ const messages = defineMessages({
   },
   seeHomes: {
     id: 'app.seeHomes',
-    defaultMessage: 'See Cars',
+    defaultMessage: 'See Bikes',
     description: 'See Homes',
   },
   rentals: {
     id: 'app.rentals',
-    defaultMessage: 'Cars',
+    defaultMessage: 'Bikes',
     description: 'Rentals',
   },
   aminities: {
@@ -423,7 +423,7 @@ const messages = defineMessages({
   },
   houseRules: {
     id: 'app.houseRules',
-    defaultMessage: 'Car rules',
+    defaultMessage: 'Bike rules',
     description: 'House Rules',
   },
   cancel: {
@@ -508,12 +508,12 @@ const messages = defineMessages({
   },
   noReviewTitle: {
     id: 'app.noReviewTitle',
-    defaultMessage: 'This car would love your review',
+    defaultMessage: 'This bike would love your review',
     description: 'View listing no review title',
   },
   noReviewInfo: {
     id: 'app.noReviewInfo',
-    defaultMessage: 'When you rent this car, here’s where your review will show up!',
+    defaultMessage: 'When you rent this bike, here’s where your review will show up!',
     description: 'View listing no review info',
   },
   loadMore: {
@@ -523,7 +523,7 @@ const messages = defineMessages({
   },
   viewCountInfo: {
     id: 'app.viewCountInfo',
-    defaultMessage: 'This car is on people minds.',
+    defaultMessage: 'This bike is on people minds.',
     description: 'View listing view count details',
   },
   viewCountTotal1: {
@@ -568,7 +568,7 @@ const messages = defineMessages({
   },
   contactHostinfo6: {
     id: 'app.contactHostinfo6',
-    defaultMessage: 'What do you love about this car? Mention it',
+    defaultMessage: 'What do you love about this bike? Mention it',
     description: 'Contact host instructions',
   },
   contactHost7: {
@@ -588,7 +588,7 @@ const messages = defineMessages({
   },
   hostErrorMessage3: {
     id: 'app.hostErrorMessage3',
-    defaultMessage: 'You can contact the car owner now',
+    defaultMessage: 'You can contact the bike owner now',
     description: 'Contact host error message',
   },
   textBoxMessage: {
@@ -628,7 +628,7 @@ const messages = defineMessages({
   },
   viewOtherListings: {
     id: 'app.viewOtherListings',
-    defaultMessage: 'View other cars',
+    defaultMessage: 'View other bikes',
     description: 'Booking button',
   },
   book: {
@@ -743,7 +743,7 @@ const messages = defineMessages({
   },
   descriptionInfo: {
     id: 'app.descriptionInfo',
-    defaultMessage: 'Driving around the city? Going on a long trip? This helps the car owner to prepare the car for your trip.',
+    defaultMessage: 'Driving around the city? Going on a long trip? This helps the bike owner to prepare the bike for your trip.',
     description: 'Payment description information',
   },
   payment: {
@@ -788,12 +788,12 @@ const messages = defineMessages({
   },
   deleteListing: {
     id: 'app.deleteListing',
-    defaultMessage: 'Delete this car',
+    defaultMessage: 'Delete this bike',
     description: 'Manage listing delete this listing',
   },
   deleteListingInfo: {
     id: 'app.deleteListingInfo',
-    defaultMessage: 'Are you sure you want to delete this car? You cannot reverse this action.',
+    defaultMessage: 'Are you sure you want to delete this bike? You cannot reverse this action.',
     description: 'Manage listing delete listing information',
   },
   delete: {
@@ -853,7 +853,7 @@ const messages = defineMessages({
   },
   content: {
     id: 'app.content',
-    defaultMessage: 'Make money by renting out your cars and letting people take them out on trips.',
+    defaultMessage: 'Make money by renting out your bikes and letting people take them out on trips.',
     description: 'content',
   },
   noTripTitle2: {
@@ -1033,7 +1033,7 @@ const messages = defineMessages({
   },
   profilePhotoInfo: {
     id: 'app.profilePhotoInfo',
-    defaultMessage: 'Clear frontal face photos are an important way for car owners and renters to learn about each other. It’s not much fun to rent a car! Please upload a photo that clearly shows your face.',
+    defaultMessage: 'Clear frontal face photos are an important way for bike owners and renters to learn about each other. It’s not much fun to rent a bike! Please upload a photo that clearly shows your face.',
     description: 'Profile photo upload information',
   },
   verifiedInfo: {
@@ -1528,12 +1528,12 @@ const messages = defineMessages({
   },
   receiptInfo1: {
     id: 'app.receiptInfo1',
-    defaultMessage: 'is authorized to accept reservation on behalf of the Car Owner as their limited agent.',
+    defaultMessage: 'is authorized to accept reservation on behalf of the Bike Owner as their limited agent.',
     description: 'Receipt information',
   },
   receiptInfo2: {
     id: 'app.receiptInfo2',
-    defaultMessage: 'This means that your payment obligation to the Car Owner is satisfied by your payment to',
+    defaultMessage: 'This means that your payment obligation to the Bike Owner is satisfied by your payment to',
     description: 'Receipt information',
   },
   receiptInfo3: {
@@ -1553,7 +1553,7 @@ const messages = defineMessages({
   },
   viewListing: {
     id: 'app.viewListing',
-    defaultMessage: 'View car',
+    defaultMessage: 'View bike',
     description: 'View Listing',
   },
   messageHost: {
@@ -1588,7 +1588,7 @@ const messages = defineMessages({
   },
   messageAction4: {
     id: 'app.messageAction4',
-    defaultMessage: 'for their car',
+    defaultMessage: 'for their bike',
     description: 'View message',
   },
   cancelReservation: {
@@ -1603,7 +1603,7 @@ const messages = defineMessages({
   },
   guestDeclinedInfo: {
     id: 'app.guestDeclinedInfo',
-    defaultMessage: 'Your request is declined by owner. You can choose different dates or search for other car.',
+    defaultMessage: 'Your request is declined by owner. You can choose different dates or search for other bike.',
     description: 'Request declined',
   },
   requestApprovedAction1: {
@@ -1628,7 +1628,7 @@ const messages = defineMessages({
   },
   bookingCanceledInfo: {
     id: 'app.bookingCanceledInfo',
-    defaultMessage: 'You can contact your car owner and do necessary arrangements or you can cancel your reservation.',
+    defaultMessage: 'You can contact your bike owner and do necessary arrangements or you can cancel your reservation.',
     description: 'Booking canceld',
   },
   bookingExpiredTitle: {
@@ -1713,7 +1713,7 @@ const messages = defineMessages({
   },
   guestRequest: {
     id: 'app.guestRequest',
-    defaultMessage: 'sent a request to booking for your car',
+    defaultMessage: 'sent a request to booking for your bike',
     description: 'Guest Request',
   },
   requestApproved: {
@@ -1728,7 +1728,7 @@ const messages = defineMessages({
   },
   declinedInfo: {
     id: 'app.declinedInfo',
-    defaultMessage: 'Make sure your calendar is up-to-date and that your vehicle page accurately reflects your car rules and requirements.',
+    defaultMessage: 'Make sure your calendar is up-to-date and that your vehicle page accurately reflects your bike rules and requirements.',
     description: 'Declined Info',
   },
   bookingIsConfirmed: {
@@ -1813,7 +1813,7 @@ const messages = defineMessages({
   },
   dashBoardInfo: {
     id: 'app.dashBoardInfo',
-    defaultMessage: 'Check your messages, view upcoming trip information, and find travel inspiration all from your dashboard. Before booking your first ride, make sure upload a photo and write a short bio to help car owners get to know about you.',
+    defaultMessage: 'Check your messages, view upcoming trip information, and find travel inspiration all from your dashboard. Before booking your first ride, make sure upload a photo and write a short bio to help bike owners get to know about you.',
     description: 'Dashboard',
   },
   allMessages: {
@@ -1833,17 +1833,17 @@ const messages = defineMessages({
   },
   whatKindOfPlace: {
     id: 'app.whatKindOfPlace',
-    defaultMessage: 'Car type',
+    defaultMessage: 'Bike type',
     description: 'What Kind Of Place',
   },
   whatKindOfPlaceListing: {
     id: 'app.whatKindOfPlaceListing',
-    defaultMessage: 'What kind of car, are you listing?',
+    defaultMessage: 'What kind of bike, are you listing?',
     description: 'What Kind Of Place Listing',
   },
   whatGuestHave: {
     id: 'app.whatGuestHave',
-    defaultMessage: 'Car type',
+    defaultMessage: 'Bike type',
     description: 'What will guests have',
   },
   skip: {
@@ -1913,7 +1913,7 @@ const messages = defineMessages({
   },
   whatamenities: {
     id: 'app.whatamenities',
-    defaultMessage: 'What features does your car offer?',
+    defaultMessage: 'What features does your bike offer?',
     description: 'Amenities Headline',
   },
   step2Heading: {
@@ -1928,12 +1928,12 @@ const messages = defineMessages({
   },
   step1SubHeading: {
     id: 'app.step1SubHeading',
-    defaultMessage: 'Describe your car',
+    defaultMessage: 'Describe your bike',
     description: 'STEP 1 Sub Heading',
   },
   step2SubHeading: {
     id: 'app.step2SubHeading',
-    defaultMessage: 'More details about your car',
+    defaultMessage: 'More details about your bike',
     description: 'STEP 2 Sub Heading',
   },
   step3SubHeading: {
@@ -1943,7 +1943,7 @@ const messages = defineMessages({
   },
   step1HeadingContent: {
     id: 'app.step1HeadingContent',
-    defaultMessage: 'Car details, car features & more',
+    defaultMessage: 'Bike details, bike features & more',
     description: 'STEP 1 Heading Content',
   },
   step2HeadingContent: {
@@ -1978,7 +1978,7 @@ const messages = defineMessages({
   },
   setHouseRules: {
     id: 'app.setHouseRules',
-    defaultMessage: 'Set car rules for your renters!',
+    defaultMessage: 'Set bike rules for your renters!',
     description: 'House Rules',
   },
   reviewGuestBookDescription: {
@@ -2058,7 +2058,7 @@ const messages = defineMessages({
   },
   descriptionLabel: {
     id: 'app.descriptionLabel',
-    defaultMessage: 'Describe the interior and exterior highlights of your car...',
+    defaultMessage: 'Describe the interior and exterior highlights of your bike...',
     description: 'Description Placeholder',
   },
   instantBookingTitle: {
@@ -2143,7 +2143,7 @@ const messages = defineMessages({
   },
   tabPlaceType: {
     id: 'app.tabPlaceType',
-    defaultMessage: 'Car Type',
+    defaultMessage: 'Bike Type',
     description: 'Tab bar',
   },
   tabTitle: {
@@ -2193,7 +2193,7 @@ const messages = defineMessages({
   },
   readyToPublish: {
     id: 'app.readyToPublish',
-    defaultMessage: 'Your car is ready to publish!',
+    defaultMessage: 'Your bike is ready to publish!',
     description: 'Listing inde',
   },
   publishNow: {
@@ -2208,7 +2208,7 @@ const messages = defineMessages({
   },
   listingPublished: {
     id: 'app.listingPublished',
-    defaultMessage: 'Your car is published!',
+    defaultMessage: 'Your bike is published!',
     description: 'Listing index',
   },
   unPublishNow: {
@@ -2253,7 +2253,7 @@ const messages = defineMessages({
   },
   hostingOn: {
     id: 'app.hostingOn',
-    defaultMessage: 'Hosting on',
+    defaultMessage: 'Reservations on',
     description: 'Not Found',
   },
   pageError: {
@@ -2428,7 +2428,7 @@ const messages = defineMessages({
   },
   propertyLocated: {
     id: 'app.propertyLocated',
-    defaultMessage: 'car is located in',
+    defaultMessage: 'bike is located in',
     description: 'Property is located in',
   },
   responseFrom: {
@@ -2678,7 +2678,7 @@ const messages = defineMessages({
   },
   yourLists: {
     id: 'app.yourLists',
-    defaultMessage: 'Your Cars',
+    defaultMessage: 'Your Bikes',
     description: 'yourLists',
   },
   wishListAdded: {
@@ -2703,13 +2703,13 @@ const messages = defineMessages({
   },
   noWishlists: {
     id: 'app.noWishlists',
-    defaultMessage: 'As you search, tap the Heart icon to save your favorite cars to say or things to do to a wishlist',
+    defaultMessage: 'As you search, tap the Heart icon to save your favorite bikes to say or things to do to a wishlist',
     description: 'noWishlists',
   },
   goToAllLists: {
     id: 'app.goToAllLists',
-    defaultMessage: 'Go to all cars',
-    description: 'Go to all cars',
+    defaultMessage: 'Go to all bikes',
+    description: 'Go to all bikes',
   },
   noWishlistsHomes: {
     id: 'app.noWishlistsHomes',
@@ -2728,7 +2728,7 @@ const messages = defineMessages({
   },
   similarListings: {
     id: 'app.similarListings',
-    defaultMessage: 'Similar cars',
+    defaultMessage: 'Similar bikes',
     description: 'similarListings',
   },
   overview: {
@@ -2798,7 +2798,7 @@ const messages = defineMessages({
   },
   nameYourList: {
     id: 'app.nameYourList',
-    defaultMessage: 'Name your car',
+    defaultMessage: 'Name your bike',
     description: 'List Name',
   },
   flexibleCheckOut: {
@@ -3053,7 +3053,7 @@ const messages = defineMessages({
   },
   carType: {
     id: 'app.carType',
-    defaultMessage: 'Car type',
+    defaultMessage: 'Bike type',
     description: 'Type of Room',
   },
   whatTypeOfProperty: {
@@ -3073,12 +3073,12 @@ const messages = defineMessages({
   },
   isPersonalHome: {
     id: 'app.isPersonalHome',
-    defaultMessage: 'Transmission',
+    defaultMessage: 'Electric',
     description: 'Is this your personal home?',
   },
   odometer: {
     id: 'app.odometer',
-    defaultMessage: 'Odometer',
+    defaultMessage: 'GPS',
     description: 'Step 1',
   },
   carFeatures: {
@@ -3088,8 +3088,8 @@ const messages = defineMessages({
   },
   carPhotos: {
     id: 'app.carPhotos',
-    defaultMessage: 'Upload your car photos',
-    description: 'Upload car photos',
+    defaultMessage: 'Upload your bike photos',
+    description: 'Upload bike photos',
   },
   aboutCar: {
     id: 'app.aboutCar',
@@ -3098,8 +3098,8 @@ const messages = defineMessages({
   },
   carRules: {
     id: 'app.carRules',
-    defaultMessage: 'Car rules',
-    description: 'Car rules',
+    defaultMessage: 'Bike rules',
+    description: 'Bike rules',
   },
   delivery: {
     id: 'app.delivery',
@@ -3118,7 +3118,7 @@ const messages = defineMessages({
   },
   listyourCar: {
     id: 'app.listyourCar',
-    defaultMessage: 'Become an owner',
+    defaultMessage: 'List your bike',
     description: 'List Your Car',
   },
   stepThreeRules: {
@@ -3133,7 +3133,7 @@ const messages = defineMessages({
   },
   automaticTransmission: {
     id: 'app.automaticTransmission',
-    defaultMessage: 'Automatic transmission',
+    defaultMessage: 'Electric',
     description: 'Toggle Button',
   },
   vehicleCategory: {
@@ -3143,23 +3143,23 @@ const messages = defineMessages({
   },
   becomehostsidePanelOne: {
     id: 'app.becomehostsidePanelOne',
-    defaultMessage: 'Car owners will manage the types of car brands in their settings.',
+    defaultMessage: 'Bike owners will manage the types of bike brands in their settings.',
     description: 'Become host side panel',
   },
   becomehostsidePanelTwo: {
     id: 'app.becomehostsidePanelTwo',
-    defaultMessage: 'Car owners will update the vehicle category from the dashboard.',
+    defaultMessage: 'Bike owners will update the vehicle category from the dashboard.',
     description: 'Become host side panel',
   },
   becomehostsidePanelThree: {
     id: 'app.becomehostsidePanelThree',
-    defaultMessage: 'Car owners can handle pricing setup for rentals.',
+    defaultMessage: 'Bike owners can handle pricing setup for rentals.',
     description: 'Become host side panel',
   },
   ownersName: {
     id: 'app.ownersName',
     defaultMessage: 'Owner name',
-    description: 'Odometer is Required',
+    description: 'GPS is Required',
   },
   licenseNumber: {
     id: 'app.licenseNumber',
@@ -3178,13 +3178,13 @@ const messages = defineMessages({
   },
   car: {
     id: 'app.car',
-    defaultMessage: 'Car',
-    description: 'Car',
+    defaultMessage: 'Bike',
+    description: 'Bike',
   },
   cars: {
     id: 'app.cars',
-    defaultMessage: 'Cars',
-    description: 'Cars',
+    defaultMessage: 'Bikes',
+    description: 'Bikes',
   },
   chooseDifferentEndTime: {
     id: 'app.chooseDifferentEndTime',
@@ -3278,7 +3278,7 @@ const messages = defineMessages({
   },
   allowOwner: {
     id: 'app.allowOwner',
-    defaultMessage: 'The platform allows owners to choose among three standardized cancellation policies (flexible, moderate, and strict) that will be enforced to protect both renter and owner alike. Each listed car and its confirmed on our site will clearly state the cancellation policy. renters may cancel and review any penalties by viewing their travel plans and then clicking ‘cancel’ on the appropriate reservation.',
+    defaultMessage: 'The platform allows owners to choose among three standardised cancellation policies (flexible, moderate, and strict) that will be enforced to protect both renter and owner alike. Each listed bike and its confirmed on our site will clearly state the cancellation policy. renters may cancel and review any penalties by viewing their travel plans and then clicking ‘cancel’ on the appropriate reservation.',
     description: 'Average rate',
   },
   Availablee: {
@@ -3298,17 +3298,17 @@ const messages = defineMessages({
   },
   localLaws2: {
     id: 'app.localLaws2',
-    defaultMessage: 'Please educate yourself about the laws in your jurisdiction before listing your car.',
+    defaultMessage: 'Please educate yourself about the laws in your jurisdiction before listing your bike.',
     description: 'Average rate',
   },
   localLaws3: {
     id: 'app.localLaws3',
-    defaultMessage: 'Most cities have different rules and specific codes and ordinances in many places (such as zoning, building, licensing or tax codes). In most places, you must register, get a permit or obtain proper insurance and license before you list your car or before you accept renters. You may also be responsible for certain taxes.',
+    defaultMessage: 'Most cities have different rules and specific codes and ordinances in many places (such as zoning, building, licensing or tax codes). In most places, you must register, get a permit or obtain proper insurance and license before you list your bike or before you accept renters. You may also be responsible for certain taxes.',
     description: 'Average rate',
   },
   localLaws4: {
     id: 'app.localLaws4',
-    defaultMessage: 'Since you are responsible for your own decision to list your car or book, you should get comfortable with the applicable rules before listing on ',
+    defaultMessage: 'Since you are responsible for your own decision to list your bike or book, you should get comfortable with the applicable rules before listing on ',
     description: 'Average rate',
   },
   localLaws41: {
@@ -3318,7 +3318,7 @@ const messages = defineMessages({
   },
   localLaws5: {
     id: 'app.localLaws5',
-    defaultMessage: 'By accepting our Terms of Service and listing your car, you certify that you will follow applicable laws and regulations.',
+    defaultMessage: 'By accepting our Terms of Service and listing your bike, you certify that you will follow applicable laws and regulations.',
     description: 'Average rate',
   },
   Automatic: {
@@ -3558,8 +3558,8 @@ const messages = defineMessages({
   },
   carNameLabel: {
     id: 'app.carNameLabel',
-    defaultMessage: 'Car Name',
-    description: 'Car Name',
+    defaultMessage: 'Bike Name',
+    description: 'Bike Name',
   },
   deliveryFeeLabel: {
     id: 'app.deliveryFeeLabel',
@@ -3653,7 +3653,7 @@ const messages = defineMessages({
   },
   provideListId: {
     id: 'app.provideListId',
-    defaultMessage: 'Enter car ID',
+    defaultMessage: 'Enter bike ID',
     description: 'Provide list ID',
   },
   onlyNumericKey: {
@@ -3813,13 +3813,13 @@ const messages = defineMessages({
   },
   carOwnerName: {
     id: 'app.carOwnerName',
-    defaultMessage: 'Car Owner Name',
-    description: 'Car Owner Name',
+    defaultMessage: 'Bike Owner Name',
+    description: 'Bike Owner Name',
   },
   carOwnerEmail: {
     id: 'app.carOwnerEmail',
-    defaultMessage: 'Car Owner Email',
-    description: 'Car Owner Email',
+    defaultMessage: 'Bike Owner Email',
+    description: 'Bike Owner Email',
   },
   createdDate: {
     id: 'app.createdDate',
@@ -3928,8 +3928,8 @@ const messages = defineMessages({
   },
   carSettings: {
     id: 'app.carSettings',
-    defaultMessage: 'Car Settings',
-    description: 'Car Settings',
+    defaultMessage: 'Bike Settings',
+    description: 'Bike Settings',
   },
   paymentGateway: {
     id: 'app.paymentGateway',
@@ -4083,8 +4083,8 @@ const messages = defineMessages({
   },
   carNameIsMissing: {
     id: 'app.carNameIsMissing',
-    defaultMessage: 'Car name is missing',
-    description: 'Car name is missing',
+    defaultMessage: 'Bike name is missing',
+    description: 'Bike name is missing',
   },
   refundToRenter: {
     id: 'app.refundToRenter',
@@ -4133,8 +4133,8 @@ const messages = defineMessages({
   },
   carOwnerServiceFee: {
     id: 'app.carOwnerServiceFee',
-    defaultMessage: 'Car Owner Service Fee',
-    description: 'Car Owner Service Fee',
+    defaultMessage: 'Bike Owner Service Fee',
+    description: 'Bike Owner Service Fee',
   },
   provideFixedGuestFee: {
     id: 'app.provideFixedGuestFee',
@@ -4363,8 +4363,8 @@ const messages = defineMessages({
   },
   carOwnerPhoneNumber: {
     id: 'app.carOwnerPhoneNumber',
-    defaultMessage: 'Car Owner Phone Number',
-    description: 'Car Owner Phone Number',
+    defaultMessage: 'Bike Owner Phone Number',
+    description: 'Bike Owner Phone Number',
   },
   cancelDate: {
     id: 'app.cancelDate',
@@ -4638,8 +4638,8 @@ const messages = defineMessages({
   },
   carSettingsForStep: {
     id: 'app.carSettingsForStep',
-    defaultMessage: 'Car settings for step#',
-    description: 'Car Settings for Step'
+    defaultMessage: 'Bike settings for step#',
+    description: 'Bike Settings for Step'
   },
   reviewHowRentersBook: {
     id: 'app.reviewHowRentersBook',
@@ -4723,7 +4723,7 @@ const messages = defineMessages({
   },
   listingsManagement: {
     id: 'app.listingsManagement',
-    defaultMessage: 'Manage cars',
+    defaultMessage: 'Manage bikes',
     description: 'Listings Management'
   },
   readyTopay: {
@@ -4763,8 +4763,8 @@ const messages = defineMessages({
   },
   homepageBanner: {
     id: 'app.homepageBanner',
-    defaultMessage: 'Home page Banner',
-    description: 'Home page Banner',
+    defaultMessage: 'Homepage Banner',
+    description: 'Homepage Banner',
   },
   WhyBecomeOwnerBlock1: {
     id: 'app.WhyBecomeOwnerBlock1',
@@ -5218,7 +5218,7 @@ const messages = defineMessages({
   },
   placesToStay: {
     id: 'app.placesToStay',
-    defaultMessage: 'Book your car',
+    defaultMessage: 'Rent a bike',
     description: 'Book your Cars',
   },
   rentNowText: {
@@ -5258,13 +5258,13 @@ const messages = defineMessages({
   },
   findYourCar: {
     id: 'app.findYourCar',
-    defaultMessage: 'Find your car',
-    description: 'findYourCar',
+    defaultMessage: 'Find your bike',
+    description: 'findYourBike',
   },
   findYourCarInfo: {
     id: 'app.findYourCarInfo',
-    defaultMessage: 'Find your car info block',
-    description: 'Find your car info block',
+    defaultMessage: 'Find your bike info block',
+    description: 'Find your bike info block',
   },
   expandContent: {
     id: 'app.expandContent',
@@ -5273,7 +5273,7 @@ const messages = defineMessages({
   },
   mapListing: {
     id: 'app.mapListing',
-    defaultMessage: 'View cars',
+    defaultMessage: 'View bikes',
     description: 'Listings',
   },
   closeAllLabel: {
@@ -5318,7 +5318,7 @@ const messages = defineMessages({
   },
   rulesDes: {
     id: 'app.rulesDes',
-    defaultMessage: ' car rules before start the ride.',
+    defaultMessage: ' bike rules before start the ride.',
     description: 'rulesDes',
   },
   PaymentmethodText: {
@@ -5523,12 +5523,12 @@ const messages = defineMessages({
   },
   descriptionStepText: {
     id: 'app.descriptionStepText',
-    defaultMessage: 'Let\'s get a name for your Car!',
+    defaultMessage: 'Let\'s get a name for your Bike!',
     description: 'descriptionStepText',
   },
   descriptionToolTip: {
     id: 'app.descriptionToolTip',
-    defaultMessage: 'Attract more renters with a crispy title and description that makes your car special.',
+    defaultMessage: 'Attract more renters with a crispy title and description that makes your bike special.',
     description: 'descriptionToolTip',
   },
   setPricingText: {
@@ -5643,7 +5643,7 @@ const messages = defineMessages({
   },
   filterByCar: {
     id: 'app.filterByCar',
-    defaultMessage: 'Filter by cars',
+    defaultMessage: 'Filter by bikes',
     description: 'reservations',
   },
   filterByDate: {
@@ -5663,12 +5663,12 @@ const messages = defineMessages({
   },
   allCars: {
     id: 'app.allCars',
-    defaultMessage: 'All cars',
+    defaultMessage: 'All bikes',
     description: 'reservations',
   },
   searchByCars: {
     id: 'app.searchByCars',
-    defaultMessage: 'Search your cars',
+    defaultMessage: 'Search your bikes',
     description: 'reservations',
   },
   searchTransactions: {
@@ -5683,7 +5683,7 @@ const messages = defineMessages({
   },
   filterByCars: {
     id: 'app.filterByCars',
-    defaultMessage: 'Filter by cars',
+    defaultMessage: 'Filter by bikes',
     description: 'Filter',
   },
   languageAndCurrency: {
@@ -5743,7 +5743,7 @@ const messages = defineMessages({
   },
   vehicleDetails: {
     id: 'app.vehicleDetails',
-    defaultMessage: 'Vehicle details',
+    defaultMessage: 'Bike details',
     description: 'vehicleDetails',
   },
   importCalenderUrl: {
@@ -5763,8 +5763,8 @@ const messages = defineMessages({
   },
   flexibleContentTwo: {
     id: 'app.flexibleContentTwo',
-    defaultMessage: 'For example: say a renter booked a trip and their check-in date is  on June 09th.',
-    description: 'For example: say a renter booked a trip and their check-in date is  on June 09th.',
+    defaultMessage: 'For example: say a renter booked a trip and their check-in date is on June 09th.',
+    description: 'For example: say a renter booked a trip and their check-in date is on June 09th.',
   },
   flexibleBeforeOneDay: {
     id: 'app.flexibleBeforeOneDay',
@@ -6013,8 +6013,8 @@ const messages = defineMessages({
   },
   hostingLabel: {
     id: 'app.hostingLabel',
-    defaultMessage: 'Hosting',
-    description: 'Hosting',
+    defaultMessage: 'Reservations',
+    description: 'Reservations',
   },
   travellingLabel: {
     id: 'app.travellingLabel',
@@ -6118,8 +6118,8 @@ const messages = defineMessages({
   },
   editCarName: {
     id: 'app.editCarName',
-    defaultMessage: 'Edit your car name',
-    description: 'Edit your car name',
+    defaultMessage: 'Edit your bike name',
+    description: 'Edit your bike name',
   },
   specialpriceInvalid: {
     id: 'app.specialpriceInvalid',
@@ -6258,8 +6258,8 @@ const messages = defineMessages({
   },
   carIDText: {
     id: 'app.carIDText',
-    defaultMessage: 'Car ID',
-    description: 'Car ID',
+    defaultMessage: 'Bike ID',
+    description: 'Bike ID',
   },
   viewCountTotal3: {
     id: 'app.viewCountTotal3',

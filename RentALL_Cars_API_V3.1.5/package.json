@@ -3,11 +3,10 @@
   "version": "3.1.5",
   "private": true,
   "description": "",
- 
   "scripts": {
     "build": "babel ./src --out-dir ./build",
     "start:production": "node ./build/server.js --host 0.0.0.0",
-    "start": "./node_modules/nodemon/bin/nodemon.js --exec babel-node ./src/server.js --host 0.0.0.0",
+    "start": "npx nodemon --exec babel-node ./src/server.js --host 0.0.0.0",
     "test": "./node_modules/nodemon/bin/nodemon.js ./build/server.js --host 0.0.0.0"
   },
   "keywords": [],
@@ -48,7 +47,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "faker": "^4.1.0",
     "lodash": "^4.17.11",
-    "nodemon": "^1.18.4",
+    "nodemon": "^3.1.10",
     "sequelize-cli": "^4.1.1",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
