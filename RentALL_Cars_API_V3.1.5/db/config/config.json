@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "Root123!",
-    "database": "rentall_cars_v_3_1_5",
+    "password": "Adi0@04",
+    "database": "redb",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

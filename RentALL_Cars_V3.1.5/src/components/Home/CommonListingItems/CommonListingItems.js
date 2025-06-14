@@ -55,7 +55,7 @@ class CommonListingItems extends React.Component {
                                         <img src={steeringIcon} className={cx(s.carType, 'carTypeIconRTL')} />
                                         <span className='carTypeRTL'>{carType}</span>
                                         <span className={s.dotCss}></span>
-                                        <span className={s.textFlow}>{transmissionLabel}</span>
+                                        {/* <span className={s.textFlow}>{transmissionLabel}</span> */}
                                     </div>
                                 </div>
                                 <div className={cx(s.PerDay)}>
