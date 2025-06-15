@@ -711,7 +711,7 @@
   {
     "id": "app.allowOwner",
     "description": "Average rate",
-    "defaultMessage": "The platform allows owners to choose among three standardized cancellation policies (flexible, moderate, and strict) that will be enforced to protect both renter and owner alike. Each listed car and its confirmed on our site will clearly state the cancellation policy. renters may cancel and review any penalties by viewing their travel plans and then clicking ‘cancel’ on the appropriate reservation.",
+    "defaultMessage": "The platform allows owners to choose among three standardised cancellation policies (flexible, moderate, and strict) that will be enforced to protect both renter and owner alike. Each listed bike and its confirmed on our site will clearly state the cancellation policy. renters may cancel and review any penalties by viewing their travel plans and then clicking ‘cancel’ on the appropriate reservation.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -855,7 +855,7 @@
   {
     "id": "app.automaticTransmission",
     "description": "Toggle Button",
-    "defaultMessage": "Automatic transmission",
+    "defaultMessage": "Electric",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -972,7 +972,7 @@
   {
     "id": "app.becomehostsidePanelOne",
     "description": "Become host side panel",
-    "defaultMessage": "Car owners will manage the types of car brands in their settings.",
+    "defaultMessage": "Bike owners will manage the types of bike brands in their settings.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -981,7 +981,7 @@
   {
     "id": "app.becomehostsidePanelThree",
     "description": "Become host side panel",
-    "defaultMessage": "Car owners can handle pricing setup for rentals.",
+    "defaultMessage": "Bike owners can handle pricing setup for rentals.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -990,7 +990,7 @@
   {
     "id": "app.becomehostsidePanelTwo",
     "description": "Become host side panel",
-    "defaultMessage": "Car owners will update the vehicle category from the dashboard.",
+    "defaultMessage": "Bike owners will update the vehicle category from the dashboard.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1080,7 +1080,7 @@
   {
     "id": "app.bookingCanceledInfo",
     "description": "Booking canceld",
-    "defaultMessage": "You can contact your car owner and do necessary arrangements or you can cancel your reservation.",
+    "defaultMessage": "You can contact your bike owner and do necessary arrangements or you can cancel your reservation.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1331,8 +1331,8 @@
   },
   {
     "id": "app.car",
-    "description": "Car",
-    "defaultMessage": "Car",
+    "description": "Bike",
+    "defaultMessage": "Bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1358,8 +1358,8 @@
   },
   {
     "id": "app.carNameIsMissing",
-    "description": "Car name is missing",
-    "defaultMessage": "Car name is missing",
+    "description": "Bike name is missing",
+    "defaultMessage": "Bike name is missing",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1367,8 +1367,8 @@
   },
   {
     "id": "app.carNameLabel",
-    "description": "Car Name",
-    "defaultMessage": "Car Name",
+    "description": "Bike Name",
+    "defaultMessage": "Bike Name",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1376,8 +1376,8 @@
   },
   {
     "id": "app.carOwnerEmail",
-    "description": "Car Owner Email",
-    "defaultMessage": "Car Owner Email",
+    "description": "Bike Owner Email",
+    "defaultMessage": "Bike Owner Email",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1385,8 +1385,8 @@
   },
   {
     "id": "app.carOwnerName",
-    "description": "Car Owner Name",
-    "defaultMessage": "Car Owner Name",
+    "description": "Bike Owner Name",
+    "defaultMessage": "Bike Owner Name",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1394,8 +1394,8 @@
   },
   {
     "id": "app.carOwnerPhoneNumber",
-    "description": "Car Owner Phone Number",
-    "defaultMessage": "Car Owner Phone Number",
+    "description": "Bike Owner Phone Number",
+    "defaultMessage": "Bike Owner Phone Number",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1403,8 +1403,8 @@
   },
   {
     "id": "app.carOwnerServiceFee",
-    "description": "Car Owner Service Fee",
-    "defaultMessage": "Car Owner Service Fee",
+    "description": "Bike Owner Service Fee",
+    "defaultMessage": "Bike Owner Service Fee",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1412,8 +1412,8 @@
   },
   {
     "id": "app.carPhotos",
-    "description": "Upload car photos",
-    "defaultMessage": "Upload your car photos",
+    "description": "Upload bike photos",
+    "defaultMessage": "Upload your bike photos",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1421,8 +1421,8 @@
   },
   {
     "id": "app.carRules",
-    "description": "Car rules",
-    "defaultMessage": "Car rules",
+    "description": "Bike rules",
+    "defaultMessage": "Bike rules",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1430,8 +1430,8 @@
   },
   {
     "id": "app.carSettings",
-    "description": "Car Settings",
-    "defaultMessage": "Car Settings",
+    "description": "Bike Settings",
+    "defaultMessage": "Bike Settings",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1439,8 +1439,8 @@
   },
   {
     "id": "app.carSettingsForStep",
-    "description": "Car Settings for Step",
-    "defaultMessage": "Car settings for step#",
+    "description": "Bike Settings for Step",
+    "defaultMessage": "Bike settings for step#",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1449,7 +1449,7 @@
   {
     "id": "app.carType",
     "description": "Type of Room",
-    "defaultMessage": "Car type",
+    "defaultMessage": "Bike type",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1457,8 +1457,8 @@
   },
   {
     "id": "app.cars",
-    "description": "Cars",
-    "defaultMessage": "Cars",
+    "description": "Bikes",
+    "defaultMessage": "Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1917,7 +1917,7 @@
   {
     "id": "app.contactHostinfo6",
     "description": "Contact host instructions",
-    "defaultMessage": "What do you love about this car? Mention it",
+    "defaultMessage": "What do you love about this bike? Mention it",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -1944,7 +1944,7 @@
   {
     "id": "app.content",
     "description": "content",
-    "defaultMessage": "Make money by renting out your cars and letting people take them out on trips.",
+    "defaultMessage": "Make money by renting out your bikes and letting people take them out on trips.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2088,7 +2088,7 @@
   {
     "id": "app.dashBoardInfo",
     "description": "Dashboard",
-    "defaultMessage": "Check your messages, view upcoming trip information, and find travel inspiration all from your dashboard. Before booking your first ride, make sure upload a photo and write a short bio to help car owners get to know about you.",
+    "defaultMessage": "Check your messages, view upcoming trip information, and find travel inspiration all from your dashboard. Before booking your first ride, make sure upload a photo and write a short bio to help bike owners get to know about you.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2223,7 +2223,7 @@
   {
     "id": "app.declinedInfo",
     "description": "Declined Info",
-    "defaultMessage": "Make sure your calendar is up-to-date and that your vehicle page accurately reflects your car rules and requirements.",
+    "defaultMessage": "Make sure your calendar is up-to-date and that your vehicle page accurately reflects your bike rules and requirements.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2250,7 +2250,7 @@
   {
     "id": "app.deleteListing",
     "description": "Manage listing delete this listing",
-    "defaultMessage": "Delete this car",
+    "defaultMessage": "Delete this bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2259,7 +2259,7 @@
   {
     "id": "app.deleteListingInfo",
     "description": "Manage listing delete listing information",
-    "defaultMessage": "Are you sure you want to delete this car? You cannot reverse this action.",
+    "defaultMessage": "Are you sure you want to delete this bike? You cannot reverse this action.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2313,7 +2313,7 @@
   {
     "id": "app.descriptionInfo",
     "description": "Payment description information",
-    "defaultMessage": "Driving around the city? Going on a long trip? This helps the car owner to prepare the car for your trip.",
+    "defaultMessage": "Driving around the city? Going on a long trip? This helps the bike owner to prepare the bike for your trip.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -2322,7 +2322,7 @@
   {
     "id": "app.descriptionLabel",
     "description": "Description Placeholder",
-    "defaultMessage": "Describe the interior and exterior highlights of your car...",
+    "defaultMessage": "Describe the interior and exterior highlights of your bike...",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3041,8 +3041,8 @@
   },
   {
     "id": "app.goToAllLists",
-    "description": "Go to all cars",
-    "defaultMessage": "Go to all cars",
+    "description": "Go to all bikes",
+    "defaultMessage": "Go to all bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3105,7 +3105,7 @@
   {
     "id": "app.guestDeclinedInfo",
     "description": "Request declined",
-    "defaultMessage": "Your request is declined by owner. You can choose different dates or search for other car.",
+    "defaultMessage": "Your request is declined by owner. You can choose different dates or search for other bike.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3114,7 +3114,7 @@
   {
     "id": "app.guestRequest",
     "description": "Guest Request",
-    "defaultMessage": "sent a request to booking for your car",
+    "defaultMessage": "sent a request to booking for your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3266,8 +3266,8 @@
   },
   {
     "id": "app.homepageBanner",
-    "description": "Home page Banner",
-    "defaultMessage": "Home page Banner",
+    "description": "Homepage Banner",
+    "defaultMessage": "Homepage Banner",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3357,7 +3357,7 @@
   {
     "id": "app.hostErrorMessage3",
     "description": "Contact host error message",
-    "defaultMessage": "You can contact the car owner now",
+    "defaultMessage": "You can contact the bike owner now",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3402,7 +3402,7 @@
   {
     "id": "app.hostingOn",
     "description": "Not Found",
-    "defaultMessage": "Hosting on",
+    "defaultMessage": "Reservations on",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3411,7 +3411,7 @@
   {
     "id": "app.houseRules",
     "description": "House Rules",
-    "defaultMessage": "Car rules",
+    "defaultMessage": "Bike rules",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3708,7 +3708,7 @@
   {
     "id": "app.isPersonalHome",
     "description": "Is this your personal home?",
-    "defaultMessage": "Transmission",
+    "defaultMessage": "Electric",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3897,7 +3897,7 @@
   {
     "id": "app.listingPublished",
     "description": "Listing index",
-    "defaultMessage": "Your car is published!",
+    "defaultMessage": "Your bike is published!",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3924,7 +3924,7 @@
   {
     "id": "app.listingsManagement",
     "description": "Listings Management",
-    "defaultMessage": "Manage cars",
+    "defaultMessage": "Manage bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3933,7 +3933,7 @@
   {
     "id": "app.listyourCar",
     "description": "List Your Car",
-    "defaultMessage": "Become an owner",
+    "defaultMessage": "List your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3969,7 +3969,7 @@
   {
     "id": "app.localLaws2",
     "description": "Average rate",
-    "defaultMessage": "Please educate yourself about the laws in your jurisdiction before listing your car.",
+    "defaultMessage": "Please educate yourself about the laws in your jurisdiction before listing your bike.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3978,7 +3978,7 @@
   {
     "id": "app.localLaws3",
     "description": "Average rate",
-    "defaultMessage": "Most cities have different rules and specific codes and ordinances in many places (such as zoning, building, licensing or tax codes). In most places, you must register, get a permit or obtain proper insurance and license before you list your car or before you accept renters. You may also be responsible for certain taxes.",
+    "defaultMessage": "Most cities have different rules and specific codes and ordinances in many places (such as zoning, building, licensing or tax codes). In most places, you must register, get a permit or obtain proper insurance and license before you list your bike or before you accept renters. You may also be responsible for certain taxes.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3987,7 +3987,7 @@
   {
     "id": "app.localLaws4",
     "description": "Average rate",
-    "defaultMessage": "Since you are responsible for your own decision to list your car or book, you should get comfortable with the applicable rules before listing on",
+    "defaultMessage": "Since you are responsible for your own decision to list your bike or book, you should get comfortable with the applicable rules before listing on",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4005,7 +4005,7 @@
   {
     "id": "app.localLaws5",
     "description": "Average rate",
-    "defaultMessage": "By accepting our Terms of Service and listing your car, you certify that you will follow applicable laws and regulations.",
+    "defaultMessage": "By accepting our Terms of Service and listing your bike, you certify that you will follow applicable laws and regulations.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4158,7 +4158,7 @@
   {
     "id": "app.manageListing",
     "description": "Menu item",
-    "defaultMessage": "Manage cars",
+    "defaultMessage": "Manage bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4338,7 +4338,7 @@
   {
     "id": "app.messageAction4",
     "description": "View message",
-    "defaultMessage": "for their car",
+    "defaultMessage": "for their bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4671,7 +4671,7 @@
   {
     "id": "app.nameYourList",
     "description": "List Name",
-    "defaultMessage": "Name your car",
+    "defaultMessage": "Name your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4869,7 +4869,7 @@
   {
     "id": "app.noReviewInfo",
     "description": "View listing no review info",
-    "defaultMessage": "When you rent this car, here’s where your review will show up!",
+    "defaultMessage": "When you rent this bike, here’s where your review will show up!",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4878,7 +4878,7 @@
   {
     "id": "app.noReviewTitle",
     "description": "View listing no review title",
-    "defaultMessage": "This car would love your review",
+    "defaultMessage": "This bike would love your review",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4932,7 +4932,7 @@
   {
     "id": "app.noWishlists",
     "description": "noWishlists",
-    "defaultMessage": "As you search, tap the Heart icon to save your favorite cars to say or things to do to a wishlist",
+    "defaultMessage": "As you search, tap the Heart icon to save your favorite bikes to say or things to do to a wishlist",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -5049,7 +5049,7 @@
   {
     "id": "app.odometer",
     "description": "Step 1",
-    "defaultMessage": "Odometer",
+    "defaultMessage": "GPS",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -5138,7 +5138,7 @@
   },
   {
     "id": "app.ownersName",
-    "description": "Odometer is Required",
+    "description": "GPS is Required",
     "defaultMessage": "Owner name",
     "message": "",
     "files": [
@@ -6012,7 +6012,7 @@
   {
     "id": "app.profilePhotoInfo",
     "description": "Profile photo upload information",
-    "defaultMessage": "Clear frontal face photos are an important way for car owners and renters to learn about each other. It’s not much fun to rent a car! Please upload a photo that clearly shows your face.",
+    "defaultMessage": "Clear frontal face photos are an important way for bike owners and renters to learn about each other. It’s not much fun to rent a bike! Please upload a photo that clearly shows your face.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6039,7 +6039,7 @@
   {
     "id": "app.propertyLocated",
     "description": "Property is located in",
-    "defaultMessage": "car is located in",
+    "defaultMessage": "bike is located in",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6057,7 +6057,7 @@
   {
     "id": "app.provideListId",
     "description": "Provide list ID",
-    "defaultMessage": "Enter car ID",
+    "defaultMessage": "Enter bike ID",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6102,7 +6102,7 @@
   {
     "id": "app.readyToPublish",
     "description": "Listing inde",
-    "defaultMessage": "Your car is ready to publish!",
+    "defaultMessage": "Your bike is ready to publish!",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6138,7 +6138,7 @@
   {
     "id": "app.receiptInfo1",
     "description": "Receipt information",
-    "defaultMessage": "is authorized to accept reservation on behalf of the Car Owner as their limited agent.",
+    "defaultMessage": "is authorized to accept reservation on behalf of the Bike Owner as their limited agent.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6147,7 +6147,7 @@
   {
     "id": "app.receiptInfo2",
     "description": "Receipt information",
-    "defaultMessage": "This means that your payment obligation to the Car Owner is satisfied by your payment to",
+    "defaultMessage": "This means that your payment obligation to the Bike Owner is satisfied by your payment to",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6183,7 +6183,7 @@
   {
     "id": "app.recommended",
     "description": "Recommended Home page Slider title",
-    "defaultMessage": "Recommended cars",
+    "defaultMessage": "Recommended bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6237,7 +6237,7 @@
   {
     "id": "app.rentals",
     "description": "Rentals",
-    "defaultMessage": "Cars",
+    "defaultMessage": "Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6840,7 +6840,7 @@
   {
     "id": "app.seeHomes",
     "description": "See Homes",
-    "defaultMessage": "See Cars",
+    "defaultMessage": "See Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -6966,7 +6966,7 @@
   {
     "id": "app.setHouseRules",
     "description": "House Rules",
-    "defaultMessage": "Set car rules for your renters!",
+    "defaultMessage": "Set bike rules for your renters!",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7092,7 +7092,7 @@
   {
     "id": "app.similarListings",
     "description": "similarListings",
-    "defaultMessage": "Similar cars",
+    "defaultMessage": "Similar bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7308,7 +7308,7 @@
   {
     "id": "app.step1HeadingContent",
     "description": "STEP 1 Heading Content",
-    "defaultMessage": "Car details, car features & more",
+    "defaultMessage": "Bike details, bike features & more",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7326,7 +7326,7 @@
   {
     "id": "app.step1SubHeading",
     "description": "STEP 1 Sub Heading",
-    "defaultMessage": "Describe your car",
+    "defaultMessage": "Describe your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7353,7 +7353,7 @@
   {
     "id": "app.step2SubHeading",
     "description": "STEP 2 Sub Heading",
-    "defaultMessage": "More details about your car",
+    "defaultMessage": "More details about your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7533,7 +7533,7 @@
   {
     "id": "app.tabPlaceType",
     "description": "Tab bar",
-    "defaultMessage": "Car Type",
+    "defaultMessage": "Bike Type",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8163,7 +8163,7 @@
   {
     "id": "app.viewCountInfo",
     "description": "View listing view count details",
-    "defaultMessage": "This car is on people minds.",
+    "defaultMessage": "This bike is on people minds.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8217,7 +8217,7 @@
   {
     "id": "app.viewListing",
     "description": "View Listing",
-    "defaultMessage": "View car",
+    "defaultMessage": "View bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8235,7 +8235,7 @@
   {
     "id": "app.viewOtherListings",
     "description": "Booking button",
-    "defaultMessage": "View other cars",
+    "defaultMessage": "View other bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8298,7 +8298,7 @@
   {
     "id": "app.whatGuestHave",
     "description": "What will guests have",
-    "defaultMessage": "Car type",
+    "defaultMessage": "Bike type",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8307,7 +8307,7 @@
   {
     "id": "app.whatKindOfPlace",
     "description": "What Kind Of Place",
-    "defaultMessage": "Car type",
+    "defaultMessage": "Bike type",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8316,7 +8316,7 @@
   {
     "id": "app.whatKindOfPlaceListing",
     "description": "What Kind Of Place Listing",
-    "defaultMessage": "What kind of car, are you listing?",
+    "defaultMessage": "What kind of bike, are you listing?",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8334,7 +8334,7 @@
   {
     "id": "app.whatamenities",
     "description": "Amenities Headline",
-    "defaultMessage": "What features does your car offer?",
+    "defaultMessage": "What features does your bike offer?",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8568,7 +8568,7 @@
   {
     "id": "app.yourListings",
     "description": "Your Listings",
-    "defaultMessage": "Your cars",
+    "defaultMessage": "Your bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8577,7 +8577,7 @@
   {
     "id": "app.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your Cars",
+    "defaultMessage": "Your Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8946,7 +8946,7 @@
   {
     "id": "app.descriptionStepText",
     "description": "descriptionStepText",
-    "defaultMessage": "Let's get a name for your Car!",
+    "defaultMessage": "Let's get a name for your Bike!",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8955,7 +8955,7 @@
   {
     "id": "app.descriptionToolTip",
     "description": "descriptionToolTip",
-    "defaultMessage": "Attract more renters with a crispy title and description that makes your car special.",
+    "defaultMessage": "Attract more renters with a crispy title and description that makes your bike special.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9026,8 +9026,8 @@
   },
   {
     "id": "app.findYourCar",
-    "description": "findYourCar",
-    "defaultMessage": "Find your car",
+    "description": "findYourBike",
+    "defaultMessage": "Find your bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9035,8 +9035,8 @@
   },
   {
     "id": "app.findYourCarInfo",
-    "description": "Find your car info block",
-    "defaultMessage": "Find your car info block",
+    "description": "Find your bike info block",
+    "defaultMessage": "Find your bike info block",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9162,7 +9162,7 @@
   {
     "id": "app.mapListing",
     "description": "Listings",
-    "defaultMessage": "View cars",
+    "defaultMessage": "View bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9252,7 +9252,7 @@
   {
     "id": "app.placesToStay",
     "description": "Book your Cars",
-    "defaultMessage": "Book your car",
+    "defaultMessage": "Rent a bike",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9369,7 +9369,7 @@
   {
     "id": "app.rulesDes",
     "description": "rulesDes",
-    "defaultMessage": "car rules before start the ride.",
+    "defaultMessage": "bike rules before start the ride.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9801,7 +9801,7 @@
   {
     "id": "app.allCars",
     "description": "reservations",
-    "defaultMessage": "All cars",
+    "defaultMessage": "All bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10025,8 +10025,8 @@
   },
   {
     "id": "app.editCarName",
-    "description": "Edit your car name",
-    "defaultMessage": "Edit your car name",
+    "description": "Edit your bike name",
+    "defaultMessage": "Edit your bike name",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10125,7 +10125,7 @@
   {
     "id": "app.filterByCar",
     "description": "reservations",
-    "defaultMessage": "Filter by cars",
+    "defaultMessage": "Filter by bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10134,7 +10134,7 @@
   {
     "id": "app.filterByCars",
     "description": "Filter",
-    "defaultMessage": "Filter by cars",
+    "defaultMessage": "Filter by bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10232,8 +10232,8 @@
   },
   {
     "id": "app.flexibleContentTwo",
-    "description": "For example: say a renter booked a trip and their check-in date is  on June 09th.",
-    "defaultMessage": "For example: say a renter booked a trip and their check-in date is  on June 09th.",
+    "description": "For example: say a renter booked a trip and their check-in date is on June 09th.",
+    "defaultMessage": "For example: say a renter booked a trip and their check-in date is on June 09th.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10286,8 +10286,8 @@
   },
   {
     "id": "app.hostingLabel",
-    "description": "Hosting",
-    "defaultMessage": "Hosting",
+    "description": "Reservations",
+    "defaultMessage": "Reservations",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10701,7 +10701,7 @@
   {
     "id": "app.searchByCars",
     "description": "reservations",
-    "defaultMessage": "Search your cars",
+    "defaultMessage": "Search your bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -10971,7 +10971,7 @@
   {
     "id": "app.vehicleDetails",
     "description": "vehicleDetails",
-    "defaultMessage": "Vehicle details",
+    "defaultMessage": "Bike details",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -11096,8 +11096,8 @@
   },
   {
     "id": "app.carIDText",
-    "description": "Car ID",
-    "defaultMessage": "Car ID",
+    "description": "Bike ID",
+    "defaultMessage": "Bike ID",
     "message": "",
     "files": [
       "src/locale/messages.js"
