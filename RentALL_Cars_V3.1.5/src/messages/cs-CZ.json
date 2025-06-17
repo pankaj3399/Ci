@@ -7464,7 +7464,7 @@
   {
     "id": "rentall.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your lists",
+    "defaultMessage": "My lists",
     "message": "",
     "files": [
       "src/locale/messages.js"

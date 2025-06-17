@@ -3069,7 +3069,7 @@
   {
     "id": "app.gotIt",
     "description": "cookies Disclaimer Button",
-    "defaultMessage": "GOT IT",
+    "defaultMessage": "ACCEPT",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -3393,7 +3393,7 @@
   {
     "id": "app.hosting",
     "description": "Menu item",
-    "defaultMessage": "Owner",
+    "defaultMessage": "My Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -4833,7 +4833,7 @@
   {
     "id": "app.noResultsSubTitle",
     "description": "No results message for search listing",
-    "defaultMessage": "Try adjusting your search. Here are some idea",
+    "defaultMessage": "Try adjusting your search.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7794,7 +7794,7 @@
   {
     "id": "app.traveling",
     "description": "Traveling",
-    "defaultMessage": "Renter",
+    "defaultMessage": "My Trips",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8568,7 +8568,7 @@
   {
     "id": "app.yourListings",
     "description": "Your Listings",
-    "defaultMessage": "Your bikes",
+    "defaultMessage": "My bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -8577,7 +8577,7 @@
   {
     "id": "app.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your Bikes",
+    "defaultMessage": "My Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -9603,7 +9603,7 @@
   {
     "id": "app.stepPinText",
     "description": "stepPinText",
-    "defaultMessage": "Is the pin in the right place?",
+    "defaultMessage": "Where would you like your bike to be picked up??",
     "message": "",
     "files": [
       "src/locale/messages.js"

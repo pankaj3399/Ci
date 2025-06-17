@@ -44,6 +44,8 @@ class EditProfile extends React.Component {
         settingsCollection[item.name] = item.value
       });
 
+      console.log(getWhyHostPage)
+
       return (
         <div className="whyhost-content">
           <WhyHostBanner data={settingsCollection} />

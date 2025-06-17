@@ -23,7 +23,8 @@ import { photosShow } from '../../helpers/photosShow';
 import { homebanneruploadDir } from '../../config';
 
 //Image
-import icon from '/public/SiteIcons/becomeaHostIcon.svg';
+import icon from '/public/SiteIcons/bikeIconLight.svg';
+import whyhostbanner from '/public/SiteImages/whyhostbanner.png';
 import learnIcon from '/public/SiteIcons/learnIcon.png';
 
 
@@ -82,7 +83,7 @@ class WhyHostBanner extends Component {
                             </div>
                         </Col>
                         <Col lg={6} md={5} sm={12} xs={12}>
-                            <img src={path + data.hostBannerImage2} className={s.leftImageCss} />
+                            <img src={whyhostbanner} className={s.leftImageCss} />
                         </Col>
                     </Row>
                 </div>

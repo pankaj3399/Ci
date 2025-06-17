@@ -14,7 +14,7 @@ import { formatURL } from "../../../helpers/formatURL";
 
 import startIcon from '/public/SiteIcons/star.svg';
 import arrowIcon from '/public/SiteIcons/rentNowArrow.svg';
-import steeringIcon from '/public/SiteIcons/steeringIcon.svg';
+import bikeIcon from '/public/SiteIcons/bikeIcon.svg';
 
 import s from '../../Home/HomeSlider/HomeSlider.css';
 import cs from '../../../components/commonStyle.css';
@@ -52,7 +52,7 @@ class CommonListingItems extends React.Component {
                             <div className={s.sliderbackground}>
                                 <div className={cx(s.HRDetails, 'HRDetailsRTL')}>
                                     <div className={cx(s.trip, s.hiddentextSlider, 'hiddentextSliderRTL')}>
-                                        <img src={steeringIcon} className={cx(s.carType, 'carTypeIconRTL')} />
+                                        <img src={bikeIcon} className={cx(s.carType, 'carTypeIconRTL')} />
                                         <span className='carTypeRTL'>{carType}</span>
                                         <span className={s.dotCss}></span>
                                         {/* <span className={s.textFlow}>{transmissionLabel}</span> */}

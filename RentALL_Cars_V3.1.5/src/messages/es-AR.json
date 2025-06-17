@@ -2924,7 +2924,7 @@
   {
     "id": "app.gotIt",
     "description": "cookies Disclaimer Button",
-    "defaultMessage": "GOT IT",
+    "defaultMessage": "ACCEPT",
     "message": "ENTIENDO"
   },
   {
@@ -3326,7 +3326,7 @@
   {
     "id": "app.hosting",
     "description": "Menu item",
-    "defaultMessage": "Owner",
+    "defaultMessage": "My Bikes",
     "message": "Dueño"
   },
   {
@@ -4724,7 +4724,7 @@
   {
     "id": "app.noResultsSubTitle",
     "description": "No results message for search listing",
-    "defaultMessage": "Try adjusting your search. Here are some idea",
+    "defaultMessage": "Try adjusting your search.",
     "message": "Intente ajustar su búsqueda. Aquí hay alguna idea"
   },
   {
@@ -7502,7 +7502,7 @@
   {
     "id": "app.traveling",
     "description": "Traveling",
-    "defaultMessage": "Renter",
+    "defaultMessage": "My Trips",
     "message": "Inquilino"
   },
   {
@@ -8287,14 +8287,14 @@
   },
   {
     "id": "app.yourListings",
-    "description": "Your Listings",
-    "defaultMessage": "Your bikes",
+    "description": "My Listings",
+    "defaultMessage": "My bikes",
     "message": "Tus autos"
   },
   {
     "id": "app.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your Bikes",
+    "defaultMessage": "My Bikes",
     "message": "Tus autos"
   },
   {
@@ -9212,7 +9212,7 @@
   {
     "id": "app.stepPinText",
     "description": "stepPinText",
-    "defaultMessage": "Is the pin in the right place?",
+    "defaultMessage": "Where would you like your bike to be picked up??",
     "message": "¿Está el pin en el lugar correcto?"
   },
   {

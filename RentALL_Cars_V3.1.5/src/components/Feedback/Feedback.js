@@ -15,7 +15,7 @@ import cs from '../commonStyle.css';
 
 // Image icons
 import iconOne from '/public/SiteIcons/supportIconOne.svg';
-import iconTwo from '/public/SiteIcons/supportIconTwo.svg';
+import iconTwo from '/public/SiteIcons/bikeCheck.svg';
 import iconThree from '/public/SiteIcons/supportIconThree.svg';
 
 class Feedback extends React.Component {

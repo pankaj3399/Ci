@@ -51,7 +51,7 @@ export const analytics = {  // https://analytics.google.com/
   google: { trackingId: 'UA-XXXXX-X' },
 };
 
-export const googleMapAPI = '<Your API Key>';
+export const googleMapAPI = process.env.GOOGLE_MAP_SERVER_API;
 export const googleMapServerAPI = process.env.GOOGLE_MAP_SERVER_API;
 
 export const googleCaptcha = { sitekey: '<Your Site key>' }; // site key for google recaptcha

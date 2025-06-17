@@ -1,5 +1,5 @@
 import messages from "../locale/messages";
-import iconOne from '/public/SiteIcons/hostStepIcons/carTypeIcon.svg';
+import iconOne from '/public/SiteIcons/bikeIcon.svg';
 import iconTwo from '/public/SiteIcons/hostStepIcons/location.svg';
 import iconThree from '/public/SiteIcons/hostStepIcons/features.svg';
 import iconFour from '/public/SiteIcons/hostStepIcons/photos.svg';
