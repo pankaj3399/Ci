@@ -16,7 +16,7 @@ import LoginForm from '../LoginForm';
 // Translation
 import { closeLoginModal } from '../../actions/modalActions';
 //Image
-import bgImage from '/public/siteImages/carLoginBg.png';
+import bgImage from '/public/siteImages/bikeLoginBg.png';
 class LoginModal extends Component {
   static propTypes = {
     closeLoginModal: PropTypes.func,

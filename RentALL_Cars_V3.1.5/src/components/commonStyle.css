@@ -17,14 +17,16 @@
 .btnPrimary:hover,
 .btnPrimary:focus,
 .btnPrimary:active,
-.btnPrimary:active:hover,
-.btnPrimary:active:focus,
-.btnPrimary[disabled]:hover,
-.btnPrimary[disabled]:focus {
+.btnPrimary:active:hover{
   border-color: var(--btn-primary-bg-hover) !important;
   background-color: var(--btn-primary-bg-hover) !important;
   color: var(--btn-primary-color) !important;
   box-shadow: none !important;
+}
+.btnPrimary[disabled],
+.btnPrimary[disabled]:focus,
+.btnPrimary:active:focus  {
+  background-color: #0CBCE2!important;
 }
 
 .btnPrimaryBorder {

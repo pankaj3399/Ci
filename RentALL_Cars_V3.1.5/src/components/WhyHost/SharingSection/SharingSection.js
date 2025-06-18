@@ -13,7 +13,7 @@ import {
   openSignupModal
 } from '../../../actions/modalActions';
 //Image
-import icon from '/public/SiteIcons/becomeaHostIcon.svg';
+import icon from '/public/SiteIcons/bikeIconLight.svg';
 import shareIcon from '/public/SiteIcons/shareLoveIcon.png'
 
 

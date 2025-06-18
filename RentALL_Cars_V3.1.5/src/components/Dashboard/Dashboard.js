@@ -18,7 +18,7 @@ import arrow from '/public/siteImages/rightSideArrow.svg';
 import handIcon from '/public/siteImages/dashBoardHandIcon.png';
 import allMessages from '/public/siteImages/messages.svg';
 import reviews from '/public/siteImages/reviews.svg';
-import youCars from '/public/siteImages/yourCars.svg';
+import bikeIcon from '/public/siteImages/bikeIcon.svg';
 import DashboardSideMenu from './DashboardSideMenu';
 
 import s from './Dashboard.css';
@@ -89,7 +89,7 @@ class Dashboard extends React.Component {
               </div>
             </Link>
             <Link to={'/cars'} className={cx(cs.commonContentText, cs.fontWeightMedium, cs.textDecorationNone, s.btnDisplayGrid, cs.siteTextColor, 'whiteBgColor')}>
-              <img src={youCars} />
+              <img src={bikeIcon} />
               <div className={s.btnDisplayFlex}>
                 <h4 className={cx(cs.commonMediumText, cs.fontWeightNormal)}><FormattedMessage {...messages.yourLists} /></h4>
                 <img src={arrow} className={cx(cs.blueLeftArrow, 'loginArrowRTL', 'blueLeftArrowRTL')} />

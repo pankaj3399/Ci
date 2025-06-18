@@ -92,7 +92,7 @@ const messages = defineMessages({
   },
   hosting: {
     id: 'app.hosting',
-    defaultMessage: 'Owner',
+    defaultMessage: 'My Bikes',
     description: 'Menu item',
   },
   termsPrivacy: {
@@ -267,7 +267,7 @@ const messages = defineMessages({
   },
   yourListings: {
     id: 'app.yourListings',
-    defaultMessage: 'Your bikes',
+    defaultMessage: 'My bikes',
     description: 'Your Listings',
   },
   account: {
@@ -448,7 +448,7 @@ const messages = defineMessages({
   },
   noResultsSubTitle: {
     id: 'app.noResultsSubTitle',
-    defaultMessage: 'Try adjusting your search. Here are some idea',
+    defaultMessage: 'Try adjusting your search.',
     description: 'No results message for search listing',
   },
   noResultsTerms1: {
@@ -1488,7 +1488,7 @@ const messages = defineMessages({
   },
   traveling: {
     id: 'app.traveling',
-    defaultMessage: 'Renter',
+    defaultMessage: 'My Trips',
     description: 'Traveling',
   },
   errorMessage: {
@@ -2678,7 +2678,7 @@ const messages = defineMessages({
   },
   yourLists: {
     id: 'app.yourLists',
-    defaultMessage: 'Your Bikes',
+    defaultMessage: 'My Bikes',
     description: 'yourLists',
   },
   wishListAdded: {
@@ -2973,7 +2973,7 @@ const messages = defineMessages({
   },
   gotIt: {
     id: 'app.gotIt',
-    defaultMessage: 'GOT IT',
+    defaultMessage: 'ACCEPT',
     description: ' cookies Disclaimer Button'
   },
   step1HeadingNew: {
@@ -5503,7 +5503,7 @@ const messages = defineMessages({
   },
   stepPinText: {
     id: 'app.stepPinText',
-    defaultMessage: 'Is the pin in the right place?',
+    defaultMessage: 'Where would you like your bike to be picked up??',
     description: 'stepPinText'
   },
   step2PhotoTitle: {

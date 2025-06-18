@@ -4680,7 +4680,7 @@
   {
     "id": "rentall.gotIt",
     "description": "cookies Disclaimer Button",
-    "defaultMessage": "GOT IT",
+    "defaultMessage": "ACCEPT",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -7371,7 +7371,7 @@
   {
     "id": "rentall.noResultsSubTitle",
     "description": "No results message for search listing",
-    "defaultMessage": "Try adjusting your search. Here are some ideas:",
+    "defaultMessage": "Try adjusting your search.",
     "message": "",
     "files": [
       "src/locale/messages.js"
@@ -12771,7 +12771,7 @@
   {
     "id": "rentall.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your Bikes",
+    "defaultMessage": "My Bikes",
     "message": "",
     "files": [
       "src/locale/messages.js"

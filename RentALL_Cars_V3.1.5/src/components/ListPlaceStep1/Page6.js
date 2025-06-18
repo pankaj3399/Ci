@@ -1,25 +1,22 @@
 // General
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {
-  FormGroup,
-} from 'react-bootstrap';
-import { Field, reduxForm, formValueSelector } from 'redux-form';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './ListPlaceStep1.css';
-import cx from 'classnames';
-import PlaceMap from '../PlaceMap';
-import FooterButton from './FooterButton';
-import SidePanel from './SidePanel';
-import Loader from '../Loader';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { FormGroup } from "react-bootstrap";
+import { Field, reduxForm, formValueSelector } from "redux-form";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import withStyles from "isomorphic-style-loader/lib/withStyles";
+import s from "./ListPlaceStep1.css";
+import cx from "classnames";
+import PlaceMap from "../PlaceMap";
+import FooterButton from "./FooterButton";
+import SidePanel from "./SidePanel";
+import Loader from "../Loader";
 
-import messages from '../../locale/messages';
-import validate from './validate';
-import update from './update';
+import messages from "../../locale/messages";
+import validate from "./validate";
+import update from "./update";
 class Page6 extends Component {
-
   static propTypes = {
     initialValues: PropTypes.object,
     previousPage: PropTypes.any,
@@ -30,7 +27,16 @@ class Page6 extends Component {
     lng: PropTypes.number,
   };
 
-  renderPlaceMap = ({ input, label, meta: { touched, error }, lat, lng, isMapTouched, mapWarning, mapSuccess }) => {
+  renderPlaceMap = ({
+    input,
+    label,
+    meta: { touched, error },
+    lat,
+    lng,
+    isMapTouched,
+    mapWarning,
+    mapSuccess,
+  }) => {
     const { formatMessage } = this.props.intl;
     return (
       <div>
@@ -44,8 +50,8 @@ class Page6 extends Component {
           mapSuccess={mapSuccess}
         />
       </div>
-    )
-  }
+    );
+  };
 
   render() {
     const { error, handleSubmit, previousPage, nextPage } = this.props;
@@ -56,7 +62,7 @@ class Page6 extends Component {
       isDisabled = false;
     }
     return (
-      <div className={cx(s.stepGrid, 'stepGridRTL')}>
+      <div className={cx(s.stepGrid, "stepGridRTL")}>
         <SidePanel
           title={formatMessage(messages.step1HeadingNew)}
           landingContent={formatMessage(messages.stepPinText)}
@@ -65,11 +71,8 @@ class Page6 extends Component {
           {error && <strong>{formatMessage(error)}</strong>}
           <div className={s.landingMainContent}>
             <FormGroup className={s.formGroup}>
-              {
-                !lat && !lng && <Loader type={"text"} />
-              }
-              {
-                lat && lng &&
+              {!lat && !lng && <Loader type={"text"} />}
+              {lat && lng && (
                 <Field
                   name="locationMap"
                   component={this.renderPlaceMap}
@@ -79,8 +82,14 @@ class Page6 extends Component {
                   mapWarning={formatMessage(messages.mapWarning)}
                   mapSuccess={formatMessage(messages.mapSuccess)}
                 />
-              }
+              )}
             </FormGroup>
+            <p style={{ color: "#7D7D7D",fontSize:"14px" }}>
+              Place the pin near your chosen safe place. This could be your
+              house, a public bike rack or any place you would feel comfortable
+              leaving your bike.{" "}
+              <b> This location will be displayed on your listing.</b>{" "}
+            </p>
           </div>
           <FooterButton
             isDisabled={error || isDisabled}
@@ -93,33 +102,30 @@ class Page6 extends Component {
           />
         </form>
       </div>
-    )
+    );
   }
 }
 
 Page6 = reduxForm({
-  form: 'ListPlaceStep1', // a unique name for this form
+  form: "ListPlaceStep1", // a unique name for this form
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
   validate,
-  onSubmit: update
+  onSubmit: update,
 })(Page6);
 
-
-const selector = formValueSelector('ListPlaceStep1'); // <-- same as form name
-Page6 = connect(
-  state => {
-    const locationMap = selector(state, 'locationMap');
-    const isMapTouched = selector(state, 'isMapTouched');
-    const lat = selector(state, 'lat');
-    const lng = selector(state, 'lng');
-    return {
-      locationMap,
-      isMapTouched,
-      lat,
-      lng,
-    }
-  }
-)(Page6);
+const selector = formValueSelector("ListPlaceStep1"); // <-- same as form name
+Page6 = connect((state) => {
+  const locationMap = selector(state, "locationMap");
+  const isMapTouched = selector(state, "isMapTouched");
+  const lat = selector(state, "lat");
+  const lng = selector(state, "lng");
+  return {
+    locationMap,
+    isMapTouched,
+    lat,
+    lng,
+  };
+})(Page6);
 
 export default injectIntl(withStyles(s)(Page6));

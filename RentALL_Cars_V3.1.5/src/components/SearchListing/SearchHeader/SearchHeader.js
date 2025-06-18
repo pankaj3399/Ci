@@ -23,6 +23,7 @@ import priceIcon from '/public/SiteIcons/priceIcon.svg';
 import instantIcon from '/public/SiteIcons/instantIcon.svg';
 import moreIcon from '/public/SiteIcons/moreIcon.svg';
 import calendarIcon from '/public/SiteIcons/filterCalIcon.svg';
+import bikeIcon from '/public/SiteIcons/bikeIcon.svg';
 import { connect } from 'react-redux';
 import history from '../../../core/history';
 import s from './SearchHeader.css';
@@ -167,7 +168,7 @@ class SearchHeader extends Component {
                 className={cx(s.filterButtonContainer, 'hidden-xs', s.hideTabletSection, 'filterButtonContainerRTL')}
                 handleTabToggle={this.handleTabToggle}
                 isExpand={tabs.homeType}
-                filterIcon={carTypeIcon}
+                filterIcon={bikeIcon}
               />
               <Price
                 className={cx(s.filterButtonContainer, 'hidden-xs', s.hideTabletSection, 'filterButtonContainerRTL')}

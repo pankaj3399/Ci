@@ -26,10 +26,10 @@ class BannerCaption extends React.Component {
       return (
 
         <div className={cx(s.bannerCaptionContainer)}>
-          <h1 className={cx(s.noMargin, s.bannerCaptionText)}>
+          {/* <h1 className={cx(s.noMargin, s.bannerCaptionText)}>
             {getBanner.title}
             {' '} {getBanner.content}
-          </h1>
+          </h1> */}
         </div>
       );
     }

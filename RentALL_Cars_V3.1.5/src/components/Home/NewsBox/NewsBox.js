@@ -9,7 +9,7 @@ import { photosShow } from '../../../helpers/photosShow';
 import { banneruploadDir } from '../../../config';
 
 import searchIcon from '/public/SiteIcons/bookYourIcon.svg';
-import steeingIcon from '/public/SiteIcons/becomeaHostIcon.svg';
+import bikeIconLight from '/public/SiteIcons/bikeIconLight.svg';
 
 import s from './NewsBox.css';
 import cs from '../../commonStyle.css';
@@ -36,7 +36,8 @@ class NewsBox extends React.Component {
             <img src={searchIcon} className={'imgIconRight'} />
             <span className={cs.vtrMiddle}>{buttonLabel}</span>
           </Link>
-          <Link to={buttonLink2} className={cx(cs.btn, cs.btnPrimary, s.buttonFlex, s.marginLeft, 'marginLeftBoxRTL')}><img src={steeingIcon} className={'imgIconRight'} /><span className={cs.vtrMiddle}>{buttonLabel2}</span></Link>
+          <Link to={buttonLink2} className={cx(cs.btn, cs.btnPrimary, s.buttonFlex, s.marginLeft, 'marginLeftBoxRTL')}>
+          <img src={bikeIconLight} className={'imgIconRight'} /><span className={cs.vtrMiddle}>{buttonLabel2}</span></Link>
         </div>
       </div>
     );

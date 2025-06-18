@@ -7,7 +7,7 @@ import { photosShow } from '../../../helpers/photosShow';
 import { homebanneruploadDir } from '../../../config';
 
 //Image
-import icon from '/public/SiteIcons/streeingWheel.svg';
+import icon from '/public/SiteIcons/bikeWheel.svg';
 
 class BookYourCar extends React.Component {
 

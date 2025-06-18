@@ -26,9 +26,10 @@ import Avatar from '../../Avatar';
 import Link from '../../Link';
 
 //Images
-import carTypeIcon from '/public/SiteIcons/carTypeIcon.svg';
+import bikeIcon from '/public/SiteIcons/directions_bike.svg';
 import modelIcon from '/public/SiteIcons/modelIcon.svg';
 import calendarIcon from '/public/SiteIcons/calendarIcon.svg';
+import verified from '/public/SiteIcons/verified.png';
 import speedometerIcon from '/public/SiteIcons/speedometerIcon.svg';
 import makeIcon from '/public/SiteIcons/makeIcon.svg';
 import transmissionIcon from '/public/SiteIcons/transmissionIcon.svg';
@@ -70,6 +71,7 @@ class ListingIntro extends React.Component {
               </h4>
             </div>
           </div>
+          <img src={verified}/>
           {
             !isHost && !userBanStatus && <Link noLink className={cx(cs.btnPrimary, cs.btnBig, cs.displayinlineBlock, s.mobileMargin)} onClick={(e) => { e.preventDefault(); contactHostOpen(id) }}>
               {formatMessage(messages.contactHost)}
@@ -79,7 +81,7 @@ class ListingIntro extends React.Component {
         <hr className={cs.listingHorizoltalLine} />
         <div className={s.displayGrid}>
           <div className={cx(s.gridBoxSection, cs.spaceBottom4, 'viewListingGridBoxRTL')}>
-            <img src={carTypeIcon} className={cs.spaceBottom3} />
+            <img src={bikeIcon} className={cs.spaceBottom3} />
             <h4 className={cx(cs.commonContentText, cs.fontWeightBold, cs.paddingBottom1)}>{formatMessage(messages.carType)}</h4>
             <h5 className={cx(cs.commonMediumText, cs.fontWeightNormal, s.textSection)}>{data?.settingsData[0]?.listsettings?.itemName}</h5>
           </div>
@@ -98,7 +100,7 @@ class ListingIntro extends React.Component {
             <h4 className={cx(cs.commonContentText, cs.fontWeightBold, cs.paddingBottom1)}>{formatMessage(messages.year)}</h4>
             <h5 className={cx(cs.commonMediumText, cs.fontWeightNormal, s.textSection)}>{data?.settingsData[2]?.listsettings?.itemName}</h5>
           </div>
-          <div className={cx(s.gridBoxSection, cs.spaceBottom4, 'viewListingGridBoxRTL')}>
+          {/* <div className={cx(s.gridBoxSection, cs.spaceBottom4, 'viewListingGridBoxRTL')}>
             <img src={transmissionIcon} className={cs.spaceBottom3} />
             <h4 className={cx(cs.commonContentText, cs.fontWeightBold, cs.paddingBottom1)}>{formatMessage(messages.isPersonalHome)}</h4>
             <h5 className={cx(cs.commonMediumText, cs.fontWeightNormal, s.textSection)}>{transmission}</h5>
@@ -107,7 +109,7 @@ class ListingIntro extends React.Component {
             <img src={speedometerIcon} className={cs.spaceBottom3} />
             <h4 className={cx(cs.commonContentText, cs.fontWeightBold, cs.paddingBottom1)}>{formatMessage(messages.odometer)}</h4>
             <h5 className={cx(cs.commonMediumText, cs.fontWeightNormal, s.textSection)}>{data?.settingsData[4]?.listsettings?.itemName}</h5>
-          </div>
+          </div> */}
         </div>
       </>
     );

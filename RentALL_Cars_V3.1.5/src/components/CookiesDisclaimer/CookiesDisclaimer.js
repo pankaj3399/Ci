@@ -91,7 +91,7 @@ class CookiesDisclaimer extends Component {
                           <Link to={'/cookie-policy'} className={cx(s.labelText, s.linkStyle)}>{formatMessage(messages.cookiePolicy)}</Link>
                         </span>
                       </div>
-
+                  
                       <div className={cx(s.displayBtn)}>
                         <Button
                           type="button"

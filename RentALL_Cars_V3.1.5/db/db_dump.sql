@@ -614,7 +614,7 @@ CREATE TABLE `ImageBanner` (
 
 LOCK TABLES `ImageBanner` WRITE;
 /*!40000 ALTER TABLE `ImageBanner` DISABLE KEYS */;
-INSERT INTO `ImageBanner` VALUES (1,'Lorem Ipsum is simply dummy text','Lorem Ipsum is simply dummy text of the printing and typesetting industry.',' Book you car','88c35210374d163eb7eb0e0f6ac479e9.png','2019-03-27 11:53:47','2023-08-18 08:34:35','Become an owner','/why-become-owner','/s');
+INSERT INTO `ImageBanner` VALUES (1,'Lorem Ipsum is simply dummy text','Lorem Ipsum is simply dummy text of the printing and typesetting industry.',' Book a bike','88c35210374d163eb7eb0e0f6ac479e9.png','2019-03-27 11:53:47','2023-08-18 08:34:35','Become an owner','/why-become-owner','/s');
 /*!40000 ALTER TABLE `ImageBanner` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -14,7 +14,7 @@ import Link from '../../Link/Link';
 import cs from '../../../components/commonStyle.css'
 import NoDataView from '../../NoDataView/NoDataView';
 //Image
-import noDataIcon from '/public/SiteIcons/noItemCars.svg';
+import noDataIcon from '/public/SiteIcons/noItemBikes.svg';
 import plusIcon from '/public/SiteIcons/lightPlusIcon.svg';
 class NoItem extends React.Component {
   static propTypes = {

@@ -3899,8 +3899,8 @@
   {
     "id": "app.gotIt",
     "description": "cookies Disclaimer Button",
-    "defaultMessage": "GOT IT",
-    "message": "GOT IT",
+    "defaultMessage": "ACCEPT",
+    "message": "ACCEPT",
     "files": [
       "src/locale/messages.js"
     ]
@@ -4409,8 +4409,8 @@
   {
     "id": "app.hosting",
     "description": "Menu item",
-    "defaultMessage": "Owner",
-    "message": "Owner",
+    "defaultMessage": "My Bikes",
+    "message": "My Bikes",
     "files": [
       "src/locale/messages.js"
     ]
@@ -6287,8 +6287,8 @@
   {
     "id": "app.noResultsSubTitle",
     "description": "No results message for search listing",
-    "defaultMessage": "Try adjusting your search. Here are some idea",
-    "message": "Try adjusting your search. Here are some idea",
+    "defaultMessage": "Try adjusting your search.",
+    "message": "Try adjusting your search.",
     "files": [
       "src/locale/messages.js"
     ]
@@ -10043,8 +10043,8 @@
   {
     "id": "app.traveling",
     "description": "Traveling",
-    "defaultMessage": "Renter",
-    "message": "Renter",
+    "defaultMessage": "My Trips",
+    "message": "My Trips",
     "files": [
       "src/locale/messages.js"
     ]
@@ -11087,8 +11087,8 @@
   {
     "id": "app.yourListings",
     "description": "Your Listings",
-    "defaultMessage": "Your bikes",
-    "message": "Your bikes",
+    "defaultMessage": "My bikes",
+    "message": "My bikes",
     "files": [
       "src/locale/messages.js"
     ]
@@ -11096,8 +11096,8 @@
   {
     "id": "app.yourLists",
     "description": "yourLists",
-    "defaultMessage": "Your Bikes",
-    "message": "Your Bikes",
+    "defaultMessage": "My Bikes",
+    "message": "My Bikes",
     "files": [
       "src/locale/messages.js"
     ]
@@ -12432,8 +12432,8 @@
   {
     "id": "app.stepPinText",
     "description": "stepPinText",
-    "defaultMessage": "Is the pin in the right place?",
-    "message": "Is the pin in the right place?",
+    "defaultMessage": "Where would you like your bike to be picked up??",
+    "message": "Where would you like your bike to be picked up??",
     "files": [
       "src/locale/messages.js"
     ]
