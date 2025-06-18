@@ -84,7 +84,7 @@ class Page6 extends Component {
                 />
               )}
             </FormGroup>
-            <p style={{ color: "#7D7D7D" }}>
+            <p style={{ color: "#7D7D7D",fontSize:"14px" }}>
               Place the pin near your chosen safe place. This could be your
               house, a public bike rack or any place you would feel comfortable
               leaving your bike.{" "}
